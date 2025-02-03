@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
-import { 
-  Users, 
-  Factory, 
-  FileText, 
-  UserCog, 
-  CreditCard, 
-  AlertTriangle, 
+import {
+  Users,
+  Factory,
+  FileText,
+  UserCog,
+  CreditCard,
+  AlertTriangle,
   DollarSign,
   BarChart3,
   Menu,
@@ -18,7 +18,7 @@ import {
   Check,
   Calendar,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
 } from 'lucide-react';
 import { alerts } from '../lib/data';
 
@@ -31,25 +31,25 @@ interface Notification {
   read: boolean;
 }
 
-function Sidebar({ 
-  isCollapsed, 
-  onToggle, 
-  isMobile, 
-  isOpen, 
-  onClose 
-}: { 
-  isCollapsed: boolean; 
+function Sidebar({
+  isCollapsed,
+  onToggle,
+  isMobile,
+  isOpen,
+  onClose,
+}: {
+  isCollapsed: boolean;
   onToggle: () => void;
   isMobile: boolean;
   isOpen: boolean;
   onClose: () => void;
 }) {
   const location = useLocation();
-  
+
   const menuItems = [
     { icon: BarChart3, label: 'Dashboard', path: '/' },
-    { icon: Users, label: 'Labor Management', path: '/labor' },
-    { icon: Factory, label: 'Factory Management', path: '/factories' },
+    { icon: Users, label: 'Workers Management', path: '/labor' },
+    { icon: Factory, label: 'HRM', path: '/factories' },
     { icon: FileText, label: 'Reports', path: '/reports' },
     { icon: UserCog, label: 'User Management', path: '/users' },
     { icon: CreditCard, label: 'Payment Management', path: '/payments' },
@@ -69,27 +69,30 @@ function Sidebar({
     <>
       {/* Mobile Overlay */}
       {isMobile && isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-20"
           onClick={onClose}
         />
       )}
 
       {/* Sidebar */}
-      <div 
+      <div
         className={`
           bg-gray-900 text-white h-screen fixed left-0 top-0 z-30
           transition-all duration-300 
-          ${isMobile 
-            ? `${isOpen ? 'translate-x-0' : '-translate-x-full'} w-64` 
-            : `${isCollapsed ? 'w-20' : 'w-64'}`
+          ${
+            isMobile
+              ? `${isOpen ? 'translate-x-0' : '-translate-x-full'} w-64`
+              : `${isCollapsed ? 'w-20' : 'w-64'}`
           }
         `}
       >
         <div className="p-4">
           <div className="flex items-center justify-between mb-8">
-            {(!isCollapsed || isMobile) && <h1 className="text-xl font-bold">LSMS</h1>}
-            <button 
+            {(!isCollapsed || isMobile) && (
+              <h1 className="text-xl font-bold">LSMS</h1>
+            )}
+            <button
               onClick={isMobile ? onClose : onToggle}
               className={`p-2 hover:bg-gray-800 rounded-lg transition-transform ${
                 isCollapsed && !isMobile ? 'ml-1' : 'ml-auto'
@@ -97,8 +100,10 @@ function Sidebar({
             >
               {isMobile ? (
                 <X size={20} />
+              ) : isCollapsed ? (
+                <ChevronRight size={20} />
               ) : (
-                isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />
+                <ChevronLeft size={20} />
               )}
             </button>
           </div>
@@ -109,7 +114,9 @@ function Sidebar({
                 to={item.path}
                 onClick={handleLinkClick}
                 className={`flex items-center space-x-3 p-3 rounded-lg mb-1 ${
-                  location.pathname === item.path ? 'bg-blue-600' : 'hover:bg-gray-800'
+                  location.pathname === item.path
+                    ? 'bg-blue-600'
+                    : 'hover:bg-gray-800'
                 }`}
                 title={isCollapsed && !isMobile ? item.label : undefined}
               >
@@ -124,13 +131,13 @@ function Sidebar({
   );
 }
 
-function NotificationPanel({ 
-  isOpen, 
-  onClose, 
-  notifications, 
-  onMarkAsRead, 
-  onClearAll 
-}: { 
+function NotificationPanel({
+  isOpen,
+  onClose,
+  notifications,
+  onMarkAsRead,
+  onClearAll,
+}: {
   isOpen: boolean;
   onClose: () => void;
   notifications: Notification[];
@@ -173,13 +180,17 @@ function NotificationPanel({
                 <button
                   onClick={() => onMarkAsRead(notification.id)}
                   className={`${
-                    notification.read ? 'text-green-600' : 'text-gray-400 hover:text-green-600'
+                    notification.read
+                      ? 'text-green-600'
+                      : 'text-gray-400 hover:text-green-600'
                   }`}
                 >
                   <Check size={16} />
                 </button>
               </div>
-              <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
+              <p className="text-sm text-gray-600 mt-1">
+                {notification.message}
+              </p>
               <p className="text-xs text-gray-400 mt-2">
                 {new Date(notification.timestamp).toLocaleString()}
               </p>
@@ -191,11 +202,11 @@ function NotificationPanel({
   );
 }
 
-function Header({ 
-  isCollapsed, 
-  isMobile, 
-  onMenuClick 
-}: { 
+function Header({
+  isCollapsed,
+  isMobile,
+  onMenuClick,
+}: {
   isCollapsed: boolean;
   isMobile: boolean;
   onMenuClick: () => void;
@@ -203,25 +214,27 @@ function Header({
   const { user, logout } = useAuth();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>(() => {
-    return alerts.map(alert => ({
+    return alerts.map((alert) => ({
       id: alert.id,
       title: alert.type,
       message: alert.message,
-      type: alert.severity === 'high' ? 'alert' : 
-            alert.severity === 'medium' ? 'info' : 'success',
+      type:
+        alert.severity === 'high'
+          ? 'alert'
+          : alert.severity === 'medium'
+          ? 'info'
+          : 'success',
       timestamp: alert.createdAt,
-      read: alert.status !== 'new'
+      read: alert.status !== 'new',
     }));
   });
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   const handleMarkAsRead = (id: string) => {
-    setNotifications(prev =>
-      prev.map(notification =>
-        notification.id === id
-          ? { ...notification, read: true }
-          : notification
+    setNotifications((prev) =>
+      prev.map((notification) =>
+        notification.id === id ? { ...notification, read: true } : notification
       )
     );
   };
@@ -232,7 +245,7 @@ function Header({
   };
 
   return (
-    <header 
+    <header
       className={`
         h-16 bg-white border-b fixed top-0 right-0 z-10 
         transition-all duration-300
@@ -268,7 +281,9 @@ function Header({
             />
           </div>
           <div className="flex items-center space-x-2">
-            <span className="text-sm font-medium hidden sm:inline">{user?.name}</span>
+            <span className="text-sm font-medium hidden sm:inline">
+              {user?.name}
+            </span>
             <button
               onClick={logout}
               className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 hover:text-gray-700"
@@ -303,25 +318,22 @@ export default function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Sidebar 
-        isCollapsed={isCollapsed} 
+      <Sidebar
+        isCollapsed={isCollapsed}
         onToggle={() => setIsCollapsed(!isCollapsed)}
         isMobile={isMobile}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
       />
-      <Header 
-        isCollapsed={isCollapsed} 
+      <Header
+        isCollapsed={isCollapsed}
         isMobile={isMobile}
         onMenuClick={() => setIsSidebarOpen(true)}
       />
-      <main 
+      <main
         className={`
           pt-16 transition-all duration-300
-          ${isMobile 
-            ? 'ml-0' 
-            : isCollapsed ? 'ml-20' : 'ml-64'
-          }
+          ${isMobile ? 'ml-0' : isCollapsed ? 'ml-20' : 'ml-64'}
         `}
       >
         <div className="p-6">
