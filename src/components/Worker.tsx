@@ -67,10 +67,10 @@ export default function Workers() {
       render: (value: string) => (
         <span
           className={`px-2 py-1 rounded-full text-xs font-bold whitespace-nowrap ${
-            value.toLowerCase() === 'on-boarding'
-              ? 'bg-green-500 text-white' // ✅ Green for On-boarding
-              : value.toLowerCase() === 'off-boarding'
-              ? 'bg-red-500 text-white' // ✅ Red for Off-boarding
+            value === 'On-board'
+              ? 'bg-green-500 text-white' // ✅ Green for On-board
+              : value === 'Off-board'
+              ? 'bg-red-500 text-white' // ✅ Red for Off-board
               : 'bg-gray-300 text-gray-800' // Default gray for any other status
           }`}
         >
