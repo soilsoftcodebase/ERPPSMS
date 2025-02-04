@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import WorkerDashboard from '../components/WorkerDashboard';
 import OnBoardWorkers from '../components/OnBoardWorkers';
 import OffBoardWorkers from '../components/OffBoardWorkers';

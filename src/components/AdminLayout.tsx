@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Outlet, useLocation, Link } from "react-router-dom";
 import { useAuth } from "../lib/auth";
 import {
@@ -19,7 +19,6 @@ import {
   Calendar,
   ChevronLeft,
   ChevronRight,
-  Search,
   Moon,
   Sun,
   Landmark,
@@ -194,7 +193,7 @@ function Sidebar({
             </button>
           </div>
           <nav>
-            {menuItems.map((item) => (
+            {/* {menuItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
@@ -206,10 +205,31 @@ function Sidebar({
                 }`}
                 title={isCollapsed && !isMobile ? item.label : undefined}
               >
-                <item.icon size={20} />
+                <item.icon size={isCollapsed && !isMobile ? 28 : 20} />
                 {(!isCollapsed || isMobile) && <span>{item.label}</span>}
               </Link>
-            ))}
+            ))} */}
+            {menuItems.map((item) => (
+  <Link
+    key={item.path}
+    to={item.path}
+    onClick={handleLinkClick}
+    className={`flex items-center ${
+      isCollapsed && !isMobile ? 'justify-center' : 'space-x-3'
+    } p-3 rounded-lg mb-1 transition-transform hover:scale-105 ${
+      location.pathname === item.path
+        ? "bg-yellow-400 text-gray-900"
+        : "hover:bg-indigo-800 dark:hover:bg-gray-800"
+    }`}
+    title={isCollapsed && !isMobile ? item.label : undefined}
+  >
+    <item.icon 
+      size={isCollapsed && !isMobile ? 28 : 20}
+      className={isCollapsed && !isMobile ? "flex-shrink-0" : ""}
+    />
+    {(!isCollapsed || isMobile) && <span>{item.label}</span>}
+  </Link>
+))}
           </nav>
         </div>
       </div>
