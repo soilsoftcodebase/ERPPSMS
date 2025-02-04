@@ -1,48 +1,62 @@
-import React, { useState, useEffect } from 'react';
-import { Outlet, useLocation, Link } from 'react-router-dom';
-import { useAuth } from '../lib/auth';
-import { Home, Clock, Calendar, BarChart as ChartBar, Bell, User, LogOut, FileText, DollarSign, Menu, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Outlet, useLocation, Link } from "react-router-dom";
+import { useAuth } from "../lib/auth";
+import {
+  Home,
+  Clock,
+  Calendar,
+  BarChart as ChartBar,
+  Bell,
+  User,
+  LogOut,
+  FileText,
+  DollarSign,
+  Menu,
+  X,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 function getMenuItems(role: string) {
   const menuItems = {
     worker: [
-      { icon: Home, label: 'Dashboard', path: '/' },
-      { icon: Clock, label: 'Attendance', path: '/attendance' },
-      { icon: Calendar, label: 'Leave', path: '/leave' },
-      { icon: ChartBar, label: 'Performance', path: '/performance' },
-      { icon: DollarSign, label: 'Salary History', path: '/salary' },
+      { icon: Home, label: "Dashboard", path: "/" },
+      { icon: Clock, label: "Attendance", path: "/attendance" },
+      { icon: Calendar, label: "Leave", path: "/leave" },
+      { icon: ChartBar, label: "Performance", path: "/performance" },
+      { icon: DollarSign, label: "Salary History", path: "/salary" },
     ],
     supervisor: [
-      { icon: Home, label: 'Dashboard', path: '/' },
-      { icon: Clock, label: 'Attendance', path: '/attendance' },
-      { icon: ChartBar, label: 'Performance', path: '/performance' },
-      { icon: Calendar, label: 'Leave', path: '/leave' },
-      { icon: Bell, label: 'Alerts', path: '/alerts' },
+      { icon: Home, label: "Dashboard", path: "/" },
+      { icon: Clock, label: "Attendance", path: "/attendance" },
+      { icon: ChartBar, label: "Performance", path: "/performance" },
+      { icon: Calendar, label: "Leave", path: "/leave" },
+      { icon: Bell, label: "Alerts", path: "/alerts" },
     ],
     manager: [
-      { icon: Home, label: 'Dashboard', path: '/' },
-      { icon: Clock, label: 'Attendance', path: '/attendance' },
-      { icon: ChartBar, label: 'Performance', path: '/performance' },
-      { icon: Calendar, label: 'Leave Approvals', path: '/leave' },
+      { icon: Home, label: "Dashboard", path: "/" },
+      { icon: Clock, label: "Attendance", path: "/attendance" },
+      { icon: ChartBar, label: "Performance", path: "/performance" },
+      { icon: Calendar, label: "Leave Approvals", path: "/leave" },
     ],
     accountant: [
-      { icon: Home, label: 'Dashboard', path: '/' },
-      { icon: FileText, label: 'Invoices', path: '/invoices' },
-      { icon: DollarSign, label: 'Payments', path: '/payments' },
+      { icon: Home, label: "Dashboard", path: "/" },
+      { icon: FileText, label: "Invoices", path: "/invoices" },
+      { icon: DollarSign, label: "Payments", path: "/payments" },
     ],
   };
 
   return menuItems[role as keyof typeof menuItems] || [];
 }
 
-function Sidebar({ 
-  isCollapsed, 
-  onToggle, 
-  isMobile, 
-  isOpen, 
-  onClose 
-}: { 
-  isCollapsed: boolean; 
+function Sidebar({
+  isCollapsed,
+  onToggle,
+  isMobile,
+  isOpen,
+  onClose,
+}: {
+  isCollapsed: boolean;
   onToggle: () => void;
   isMobile: boolean;
   isOpen: boolean;
@@ -50,7 +64,7 @@ function Sidebar({
 }) {
   const location = useLocation();
   const { user } = useAuth();
-  const menuItems = getMenuItems(user?.role || '');
+  const menuItems = getMenuItems(user?.role || "");
 
   // Close sidebar on mobile when clicking a link
   const handleLinkClick = () => {
@@ -63,20 +77,21 @@ function Sidebar({
     <>
       {/* Mobile Overlay */}
       {isMobile && isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-20"
           onClick={onClose}
         />
       )}
 
       {/* Sidebar */}
-      <div 
+      <div
         className={`
           bg-white border-r h-screen fixed left-0 top-0 z-30
           transition-all duration-300 
-          ${isMobile 
-            ? `${isOpen ? 'translate-x-0' : '-translate-x-full'} w-64` 
-            : `${isCollapsed ? 'w-20' : 'w-64'}`
+          ${
+            isMobile
+              ? `${isOpen ? "translate-x-0" : "-translate-x-full"} w-64`
+              : `${isCollapsed ? "w-20" : "w-64"}`
           }
         `}
       >
@@ -85,20 +100,18 @@ function Sidebar({
             {(!isCollapsed || isMobile) && (
               <h1 className="text-xl font-bold text-gray-800">LSMS</h1>
             )}
-            <button 
+            <button
               onClick={isMobile ? onClose : onToggle}
               className={`p-2 hover:bg-gray-100 rounded-lg transition-transform ${
-                isCollapsed && !isMobile ? 'ml-1' : 'ml-auto'
+                isCollapsed && !isMobile ? "ml-1" : "ml-auto"
               }`}
             >
               {isMobile ? (
                 <X size={20} className="text-gray-600" />
+              ) : isCollapsed ? (
+                <ChevronRight size={20} className="text-gray-600" />
               ) : (
-                isCollapsed ? (
-                  <ChevronRight size={20} className="text-gray-600" />
-                ) : (
-                  <ChevronLeft size={20} className="text-gray-600" />
-                )
+                <ChevronLeft size={20} className="text-gray-600" />
               )}
             </button>
           </div>
@@ -109,9 +122,9 @@ function Sidebar({
                 to={item.path}
                 onClick={handleLinkClick}
                 className={`flex items-center space-x-3 p-3 rounded-lg mb-1 ${
-                  location.pathname === item.path 
-                    ? 'bg-blue-50 text-blue-600' 
-                    : 'text-gray-600 hover:bg-gray-50'
+                  location.pathname === item.path
+                    ? "bg-blue-50 text-blue-600"
+                    : "text-gray-600 hover:bg-gray-50"
                 }`}
                 title={isCollapsed && !isMobile ? item.label : undefined}
               >
@@ -126,11 +139,11 @@ function Sidebar({
   );
 }
 
-function Header({ 
-  isCollapsed, 
-  isMobile, 
-  onMenuClick 
-}: { 
+function Header({
+  isCollapsed,
+  isMobile,
+  onMenuClick,
+}: {
   isCollapsed: boolean;
   isMobile: boolean;
   onMenuClick: () => void;
@@ -138,11 +151,11 @@ function Header({
   const { user, logout } = useAuth();
 
   return (
-    <header 
+    <header
       className={`
         h-16 bg-white border-b fixed top-0 right-0 z-10 
         transition-all duration-300
-        ${isMobile ? 'left-0' : isCollapsed ? 'left-20' : 'left-64'}
+        ${isMobile ? "left-0" : isCollapsed ? "left-20" : "left-64"}
       `}
     >
       <div className="flex items-center justify-between h-full px-6">
@@ -157,7 +170,9 @@ function Header({
         <div className="flex items-center space-x-4 ml-auto">
           <div className="flex items-center space-x-2">
             <User size={20} className="text-gray-500" />
-            <span className="text-sm font-medium hidden sm:inline">{user?.name}</span>
+            <span className="text-sm font-medium hidden sm:inline">
+              {user?.name}
+            </span>
             <button
               onClick={logout}
               className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 hover:text-gray-700"
@@ -186,31 +201,28 @@ export default function WorkerLayout() {
     };
 
     handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Sidebar 
-        isCollapsed={isCollapsed} 
+      <Sidebar
+        isCollapsed={isCollapsed}
         onToggle={() => setIsCollapsed(!isCollapsed)}
         isMobile={isMobile}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
       />
-      <Header 
-        isCollapsed={isCollapsed} 
+      <Header
+        isCollapsed={isCollapsed}
         isMobile={isMobile}
         onMenuClick={() => setIsSidebarOpen(true)}
       />
-      <main 
+      <main
         className={`
           pt-16 transition-all duration-300
-          ${isMobile 
-            ? 'ml-0' 
-            : isCollapsed ? 'ml-20' : 'ml-64'
-          }
+          ${isMobile ? "ml-0" : isCollapsed ? "ml-20" : "ml-64"}
         `}
       >
         <div className="p-6">
