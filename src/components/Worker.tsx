@@ -89,7 +89,7 @@ export default function Workers() {
       label: "Actions",
       className: "w-32 text-center",
       render: (_: any, worker: Worker) => (
-        <div className="flex space-x-2 justify-center">
+        <div className="flex space-x-2 justify-start">
           <button
             onClick={() => handleEdit(worker)}
             className="text-blue-600 hover:text-blue-800"

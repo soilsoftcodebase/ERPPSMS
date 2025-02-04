@@ -161,7 +161,7 @@ function Sidebar({
 
       <div
         className={`
-          bg-indigo-900 dark:bg-gray-900  text-white h-screen fixed left-0 top-0 z-30
+          bg-indigo-900 dark:bg-gray-900 text-white h-screen fixed left-0 top-0 z-30
           transition-all duration-300
           ${
             isMobile
@@ -198,13 +198,22 @@ function Sidebar({
                 key={item.path}
                 to={item.path}
                 onClick={handleLinkClick}
-                className={`flex items-center space-x-3 p-3 rounded-lg mb-1 transition-transform hover:scale-105 ${
+                className={`flex items-center ${
+                  isCollapsed && !isMobile ? "justify-center" : "space-x-3"
+                } p-4 rounded-lg mb-1 transition-transform hover:scale-105 ${
                   location.pathname === item.path
                     ? "bg-yellow-400 text-gray-900"
                     : "hover:bg-indigo-800 dark:hover:bg-gray-800"
                 }`}
                 title={isCollapsed && !isMobile ? item.label : undefined}
               >
+                <item.icon
+                  size={isCollapsed && !isMobile ? 24 : 20}
+                  className={isCollapsed && !isMobile ? "flex-shrink-0" : ""}
+                />
+                {(!isCollapsed || isMobile) && <span>{item.label}</span>}
+              </Link>
+            ))}
                 <item.icon size={isCollapsed && !isMobile ? 28 : 20} />
                 {(!isCollapsed || isMobile) && <span>{item.label}</span>}
               </Link>
