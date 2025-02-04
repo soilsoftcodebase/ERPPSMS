@@ -66,7 +66,7 @@ export default function Login() {
   const demoAccounts = [
     { role: "Worker", email: "worker@example.com", icon: Users },
     { role: "Supervisor", email: "supervisor@example.com", icon: UserCheck },
-    { role: "Manager", email: "manager@example.com", icon: UserCog },
+    { role: "Factory Manager", email: "manager@example.com", icon: UserCog },
     { role: "Accountant", email: "accountant@example.com", icon: Calculator },
     { role: "Admin", email: "admin@example.com", icon: ShieldCheck },
   ];
@@ -89,7 +89,7 @@ export default function Login() {
     >
       {/* Top Navigation */}
       <nav className="absolute top-0 right-0 p-4 flex items-center gap-4">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 shadow-sm">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm shadow-sm">
           <Globe className="w-4 h-4 text-gray-600" />
           <select
             className="text-sm bg-transparent border-none focus:ring-0"
@@ -103,7 +103,7 @@ export default function Login() {
         </div>
         <button
           onClick={toggleDarkMode}
-          className="p-2 rounded-full bg-white/90 shadow-sm hover:bg-gray-50"
+          className="p-2 rounded-full bg-white/90 shadow-sm  hover:bg-gray-50"
         >
           {isDarkMode ? (
             <Sun className="w-4 h-4 text-gray-600" />
@@ -124,7 +124,7 @@ export default function Login() {
           style={{
             backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${LoginBg})`,
             backgroundSize: "cover",
-            backgroundPosition: "center",
+            backgroundPosition: "left",
           }}
         >
           <div className="text-center">
@@ -137,7 +137,7 @@ export default function Login() {
               Welcome to PSMS
             </h1>
             <p className="text-lg text-gray-200 max-w-md mx-auto">
-              Professional Services Management System
+              People Supplier Management System
             </p>
             <div className="mt-8 grid grid-cols-2 gap-4 max-w-md mx-auto">
               <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg text-white">
