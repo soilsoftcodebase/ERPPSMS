@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Outlet, useLocation, Link } from "react-router-dom";
-import { useAuth } from "../lib/auth";
+import React, { useState, useEffect } from 'react';
+import { Outlet, useLocation, Link } from 'react-router-dom';
+import { useAuth } from '../lib/auth';
 import {
   Users,
   Factory,
@@ -22,14 +22,14 @@ import {
   Search,
   Moon,
   Sun,
-} from "lucide-react";
-import { alerts } from "../lib/data";
+} from 'lucide-react';
+import { alerts } from '../lib/data';
 
 interface Notification {
   id: string;
   title: string;
   message: string;
-  type: "alert" | "info" | "success";
+  type: 'alert' | 'info' | 'success';
   timestamp: string;
   read: boolean;
 }
@@ -78,7 +78,7 @@ function NotificationPanel({
             <div
               key={notification.id}
               className={`p-4 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-300 transform hover:scale-105 ${
-                !notification.read ? "bg-blue-50 dark:bg-blue-900" : ""
+                !notification.read ? 'bg-blue-50 dark:bg-blue-900' : ''
               }`}
             >
               <div className="flex justify-between">
@@ -89,8 +89,8 @@ function NotificationPanel({
                   onClick={() => onMarkAsRead(notification.id)}
                   className={`${
                     notification.read
-                      ? "text-green-600 dark:text-green-400"
-                      : "text-gray-400 dark:text-gray-500 hover:text-green-600 dark:hover:text-green-400"
+                      ? 'text-green-600 dark:text-green-400'
+                      : 'text-gray-400 dark:text-gray-500 hover:text-green-600 dark:hover:text-green-400'
                   }`}
                 >
                   <Check size={16} />
@@ -126,15 +126,19 @@ function Sidebar({
   const location = useLocation();
 
   const menuItems = [
-    { icon: BarChart3, label: "Dashboard", path: "/" },
-    { icon: Users, label: "Workers Management", path: "/labor" },
-    { icon: Factory, label: "HRM", path: "/factories" },
-    { icon: FileText, label: "Reports", path: "/reports" },
-    { icon: UserCog, label: "User Management", path: "/users" },
-    { icon: CreditCard, label: "Payment Management", path: "/payments" },
-    { icon: AlertTriangle, label: "Alerts", path: "/alerts" },
-    { icon: DollarSign, label: "Wage Management", path: "/wages" },
-    { icon: Calendar, label: "Leave Approvals", path: "/leave-approvals" },
+    { icon: BarChart3, label: 'Dashboard', path: '/' },
+    { icon: Users, label: 'Workers Management', path: '/labor' },
+    { icon: Factory, label: 'HRM', path: '/factories' },
+    { icon: FileText, label: 'CRM', path: '/reports' },
+    { icon: UserCog, label: 'Compliance', path: '/users' },
+    { icon: CreditCard, label: 'Reports & Analytics', path: '/payments' },
+    {
+      icon: AlertTriangle,
+      label: 'Settings & User Management',
+      path: '/alerts',
+    },
+    { icon: DollarSign, label: 'Integration', path: '/wages' },
+    { icon: Calendar, label: 'Leave Approvals', path: '/leave-approvals' },
   ];
 
   const handleLinkClick = () => {
@@ -158,8 +162,8 @@ function Sidebar({
           transition-all duration-300
           ${
             isMobile
-              ? `${isOpen ? "translate-x-0" : "-translate-x-full"} w-64`
-              : `${isCollapsed ? "w-20" : "w-64"}`
+              ? `${isOpen ? 'translate-x-0' : '-translate-x-full'} w-64`
+              : `${isCollapsed ? 'w-20' : 'w-64'}`
           }
         `}
       >
@@ -173,7 +177,7 @@ function Sidebar({
             <button
               onClick={isMobile ? onClose : onToggle}
               className={`p-2 hover:bg-indigo-800 dark:hover:bg-gray-800 rounded-lg transition-transform ${
-                isCollapsed && !isMobile ? "ml-1" : "ml-auto"
+                isCollapsed && !isMobile ? 'ml-1' : 'ml-auto'
               }`}
             >
               {isMobile ? (
@@ -193,8 +197,8 @@ function Sidebar({
                 onClick={handleLinkClick}
                 className={`flex items-center space-x-3 p-3 rounded-lg mb-1 transition-transform hover:scale-105 ${
                   location.pathname === item.path
-                    ? "bg-yellow-400 text-gray-900"
-                    : "hover:bg-indigo-800 dark:hover:bg-gray-800"
+                    ? 'bg-yellow-400 text-gray-900'
+                    : 'hover:bg-indigo-800 dark:hover:bg-gray-800'
                 }`}
                 title={isCollapsed && !isMobile ? item.label : undefined}
               >
@@ -228,13 +232,13 @@ function Header({
       title: alert.type,
       message: alert.message,
       type:
-        alert.severity === "high"
-          ? "alert"
-          : alert.severity === "medium"
-          ? "info"
-          : "success",
+        alert.severity === 'high'
+          ? 'alert'
+          : alert.severity === 'medium'
+          ? 'info'
+          : 'success',
       timestamp: alert.createdAt,
-      read: alert.status !== "new",
+      read: alert.status !== 'new',
     }));
   });
 
@@ -257,7 +261,7 @@ function Header({
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle("dark", !isDarkMode);
+    document.documentElement.classList.toggle('dark', !isDarkMode);
   };
 
   return (
@@ -265,7 +269,7 @@ function Header({
       className={`
         h-16 bg-yellow-400 dark:bg-gray-800 text-gray-900 dark:text-white fixed top-0 right-0 z-10
         transition-all duration-300 shadow-md
-        ${isMobile ? "left-0" : isCollapsed ? "left-20" : "left-64"}
+        ${isMobile ? 'left-0' : isCollapsed ? 'left-20' : 'left-64'}
       `}
     >
       <div className="flex items-center justify-between h-full px-6">
@@ -375,8 +379,8 @@ export default function AdminLayout() {
     };
 
     handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   return (
@@ -396,7 +400,7 @@ export default function AdminLayout() {
       <main
         className={`
           pt-16 transition-all duration-300
-          ${isMobile ? "ml-0" : isCollapsed ? "ml-20" : "ml-64"}
+          ${isMobile ? 'ml-0' : isCollapsed ? 'ml-20' : 'ml-64'}
         `}
       >
         <div className="p-6">
