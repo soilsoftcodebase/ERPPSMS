@@ -131,7 +131,7 @@ function Sidebar({
     { icon: Users, label: "Workers Management", path: "/labor" },
     { icon: Factory, label: "HRM", path: "/factories" },
     { icon: FileText, label: "CRM", path: "/reports" },
-    { icon: Landmark, label: "Finance", path: "/finance" },
+    { icon: Landmark, label: "Finance", path: "/f" },
     { icon: UserCog, label: "Compliance", path: "/users" },
 
     { icon: CreditCard, label: "Reports & Analytics", path: "/payments" },
@@ -193,31 +193,6 @@ function Sidebar({
             </button>
           </div>
           <nav>
-            {/* {menuItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={handleLinkClick}
-                className={`flex items-center ${
-                  isCollapsed && !isMobile ? "justify-center" : "space-x-3"
-                } p-4 rounded-lg mb-1 transition-transform hover:scale-105 ${
-                  location.pathname === item.path
-                    ? "bg-yellow-400 text-gray-900"
-                    : "hover:bg-indigo-800 dark:hover:bg-gray-800"
-                }`}
-                title={isCollapsed && !isMobile ? item.label : undefined}
-              >
-                <item.icon
-                  size={isCollapsed && !isMobile ? 24 : 20}
-                  className={isCollapsed && !isMobile ? "flex-shrink-0" : ""}
-                />
-                {(!isCollapsed || isMobile) && <span>{item.label}</span>}
-              </Link>
-            ))}
-                <item.icon size={isCollapsed && !isMobile ? 28 : 20} />
-                {(!isCollapsed || isMobile) && <span>{item.label}</span>}
-              </Link>
-            ))} */}
             {menuItems.map((item) => (
   <Link
     key={item.path}
