@@ -1,11 +1,14 @@
 import { useState } from "react";
 import FinanceDashboard from "./FinanceDashboard";
+import ClientFinance from "./ClientFinance";
+import InHouseFinance from "./InHouseFinance";
+
 
 export default function FinanceManagement() {
   const [activeTab, setActiveTab] = useState<string>("finance");
 
   const tabs = [
-    { id: "financedashboard", label: "Dashboard" },
+    { id: "finance", label: "Dashboard" },
     { id: "clientfinance", label: "Client Finance" },
     { id: "HouseFinance", label: "In House Finance" },
   ];
@@ -31,9 +34,9 @@ export default function FinanceManagement() {
 
       {/* ✅ Tab Content */}
       <div className="p-4 bg-white shadow-md rounded-lg">
-        {activeTab === "financedashboard" && <FinanceDashboard />}
-        {activeTab === "clientfinance" && <FinanceDashboard />}
-        {activeTab === "HouseFinance" && <FinanceDashboard />}
+        {activeTab === "finance" && <FinanceDashboard />}
+        {activeTab === "clientfinance" && <ClientFinance />}
+        {activeTab === "HouseFinance" && <InHouseFinance />}
       </div>
     </div>
   );
