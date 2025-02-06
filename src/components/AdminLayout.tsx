@@ -131,7 +131,7 @@ function Sidebar({
     { icon: Users, label: "Workers Management", path: "/labor" },
     { icon: Factory, label: "HRM", path: "/factories" },
     { icon: FileText, label: "CRM", path: "/reports" },
-    { icon: Landmark, label: "Finance", path: "/f" },
+    { icon: Landmark, label: "Finance", path: "/finance" },
     { icon: UserCog, label: "Compliance", path: "/users" },
 
     { icon: CreditCard, label: "Reports & Analytics", path: "/payments" },

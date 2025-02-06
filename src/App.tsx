@@ -7,7 +7,7 @@ import Login from "./pages/Login";
 // Import existing components
 import Dashboard from "./pages/Dashboard";
 import LaborManagement from "./pages/LaborManagement";
-import FactoryManagement from "./pages/admin/HRM/FactoryManagement";
+import FactoryManagement from "./pages/FactoryManagement";
 import Reports from "./pages/Reports";
 import UserManagement from "./pages/UserManagement";
 import PaymentManagement from "./pages/PaymentManagement";
@@ -67,6 +67,7 @@ export default function App() {
             <Route path="alerts" element={<AlertManagement />} />
             <Route path="wages" element={<WageManagement />} />
             <Route path="leave-approvals" element={<LeaveManagement />} />
+            <Route path="finance" element={<FinanceManagement />} />
           </Route>
         )}
 
