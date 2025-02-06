@@ -2,10 +2,10 @@ import { useState } from 'react';
 import FinanceDashboard from '../components/FinanceDashboard';
 
 export default function FinanceManagement() {
-  const [activeTab, setActiveTab] = useState<string>('financedashboard'); 
+  const [activeTab, setActiveTab] = useState<string>('finance'); 
 
   const tabs = [
-    { id: 'financedashboard', label: 'Finance Dashboard' },
+    { id: 'financedashboard', label: 'Finance' },
   ];
 
   return (

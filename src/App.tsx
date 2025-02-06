@@ -14,6 +14,7 @@ import PaymentManagement from './pages/PaymentManagement';
 import AlertManagement from './pages/AlertManagement';
 import WageManagement from './pages/WageManagement';
 import LeaveManagement from './pages/LeaveManagement';
+import FinanceManagement from './pages/FinanceManagement';
 
 // Worker Routes
 import WorkerDashboard from './pages/worker/Dashboard';
@@ -37,6 +38,7 @@ import FactoryPerformance from './pages/factory/Performance';
 import AccountsDashboard from './pages/accounts/Dashboard';
 import AccountsInvoices from './pages/accounts/Invoices';
 import AccountsPayments from './pages/accounts/Payments';
+
 
 export default function App() {
   const { user } = useAuth();
@@ -67,6 +69,7 @@ export default function App() {
             <Route path="alerts" element={<AlertManagement />} />
             <Route path="wages" element={<WageManagement />} />
             <Route path="leave-approvals" element={<LeaveManagement />} />
+            <Route path="finance" element={<FinanceManagement />} />
           </Route>
         )}
 
