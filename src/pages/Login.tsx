@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate, useLocation } from "react-router-dom";
+import LoginBg from "../assets/1445.jpg";
+import PSMSlogo from "../assets/PSMSlogo2.jpg";
 import { useAuth } from "../lib/auth";
 import {
   Lock,
@@ -18,10 +20,9 @@ import {
   HelpCircle,
   Moon,
   Sun,
+  Building2,
+  ArrowRight,
 } from "lucide-react";
-import PSMSLogo from "../assets/PSMSlogo.png";
-import LSMSbg from "../assets/LSMSbg.jpg";
-import LoginBg from "../assets/1445.jpg";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -64,11 +65,36 @@ export default function Login() {
   };
 
   const demoAccounts = [
-    { role: "Worker", email: "worker@example.com", icon: Users },
-    { role: "Supervisor", email: "supervisor@example.com", icon: UserCheck },
-    { role: "Factory Manager", email: "manager@example.com", icon: UserCog },
-    { role: "Accountant", email: "accountant@example.com", icon: Calculator },
-    { role: "Admin", email: "admin@example.com", icon: ShieldCheck },
+    {
+      role: "Worker",
+      email: "worker@example.com",
+      icon: Users,
+      color: "from-blue-500 to-blue-600",
+    },
+    {
+      role: "Supervisor",
+      email: "supervisor@example.com",
+      icon: UserCheck,
+      color: "from-emerald-500 to-emerald-600",
+    },
+    {
+      role: "Factory Manager",
+      email: "manager@example.com",
+      icon: UserCog,
+      color: "from-purple-500 to-purple-600",
+    },
+    {
+      role: "Accountant",
+      email: "accountant@example.com",
+      icon: Calculator,
+      color: "from-amber-500 to-amber-600",
+    },
+    {
+      role: "Admin",
+      email: "admin@example.com",
+      icon: ShieldCheck,
+      color: "from-red-500 to-red-600",
+    },
   ];
 
   const handleDemoLogin = (email: string) => {
@@ -78,21 +104,18 @@ export default function Login() {
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
-    // Add actual dark mode implementation here
   };
 
   return (
     <div
-      className={`min-h-screen flex flex-col ${
-        isDarkMode ? "bg-gray-900" : ""
-      }`}
+      className={`min-h-screen ${isDarkMode ? "bg-gray-900" : "bg-gray-50"}`}
     >
       {/* Top Navigation */}
-      <nav className="absolute top-0 right-0 p-4 flex items-center gap-4">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm shadow-sm">
+      <nav className="absolute top-0 right-0 p-6 flex items-center gap-4 z-10">
+        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-lg">
           <Globe className="w-4 h-4 text-gray-600" />
           <select
-            className="text-sm bg-transparent border-none focus:ring-0"
+            className="text-sm bg-transparent border-none focus:ring-0 text-gray-600"
             value={selectedLanguage}
             onChange={(e) => setSelectedLanguage(e.target.value)}
           >
@@ -103,7 +126,7 @@ export default function Login() {
         </div>
         <button
           onClick={toggleDarkMode}
-          className="p-2 rounded-full bg-white/90 shadow-sm  hover:bg-gray-50"
+          className="p-3 rounded-full bg-white shadow-lg hover:bg-gray-50 transition-all"
         >
           {isDarkMode ? (
             <Sun className="w-4 h-4 text-gray-600" />
@@ -111,57 +134,88 @@ export default function Login() {
             <Moon className="w-4 h-4 text-gray-600" />
           )}
         </button>
-        <button className="p-2 rounded-full bg-white/90 shadow-sm hover:bg-gray-50">
+        <button className="p-3 rounded-full bg-white shadow-lg hover:bg-gray-50 transition-all">
           <HelpCircle className="w-4 h-4 text-gray-600" />
         </button>
       </nav>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col md:flex-row">
-        {/* Left Section - Background and Logo */}
+      <div className="min-h-screen flex flex-col lg:flex-row">
+        {/* Left Section - Hero Area */}
         <div
-          className="relative w-full md:w-1/2 min-h-[300px] md:min-h-screen flex items-center justify-center p-8 bg-gradient-to-br from-blue-500 to-purple-600"
+          className="relative lg:w-[60%] p-8 lg:p-20 flex flex-col justify-center"
           style={{
-            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${LoginBg})`,
+            backgroundImage: `linear-gradient(to right, rgba(10, 80, 138, 0.8), rgba(30, 70, 138, 0.9)), url('${LoginBg}')`,
             backgroundSize: "cover",
             backgroundPosition: "left",
+            // ('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070')
           }}
         >
-          <div className="text-center">
-            <img
-              src={PSMSLogo}
-              alt="PSMS Logo"
-              className="w-[300px] md:w-[450px] mx-auto mb-8"
-            />
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Welcome to PSMS
-            </h1>
-            <p className="text-lg text-gray-200 max-w-md mx-auto">
+          <img
+            src={PSMSlogo}
+            alt="PSMS Logo"
+            className="w-[300px] md:w-[300px] mb-32  rounded-xl"
+          />
+          {/* Animated Shapes */}
+          {/* <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute top-0 left-0 w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
+            <div className="absolute top-0 right-0 w-96 h-96 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000" />
+          </div> */}
+
+          <div className="relative z-10 max-w-2xl">
+            <div className="flex items-center gap-3 mb-8"></div>
+
+            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
               People Supplier Management System
+            </h2>
+
+            <p className="text-xl text-blue-100 mb-12">
+              Streamline your workforce management with our comprehensive
+              solution for personnel and supplier coordination.
             </p>
-            <div className="mt-8 grid grid-cols-2 gap-4 max-w-md mx-auto">
-              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg text-white">
-                <h3 className="font-semibold mb-1">24/7 Support</h3>
-                <p className="text-sm">Round-the-clock assistance</p>
+
+            <div className="grid grid-cols-2 gap-6">
+              <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
+                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
+                  <Users className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  Workforce Management
+                </h3>
+                <p className="text-blue-100">
+                  Efficiently manage your entire workforce from a single
+                  dashboard
+                </p>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg text-white">
-                <h3 className="font-semibold mb-1">Secure Access</h3>
-                <p className="text-sm">Enterprise-grade security</p>
+
+              <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
+                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
+                  <ShieldCheck className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  Enterprise Security
+                </h3>
+                <p className="text-blue-100">
+                  Bank-grade security with role-based access control
+                </p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Right Section - Login Form */}
-        <div className="w-full md:w-1/2 flex items-center justify-center p-8 bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="lg:w-[40%] flex items-center justify-center p-8">
           <div className="w-full max-w-md">
-            <div className="bg-white rounded-2xl shadow-xl p-8">
-              <h2 className="text-2xl font-bold text-gray-800 text-center mb-8">
-                Sign in to your account
+            <div className="bg-white rounded-3xl shadow-2xl p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                Welcome back
               </h2>
+              <p className="text-gray-600 mb-8">
+                Please enter your credentials to continue
+              </p>
 
               {error && (
-                <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 flex items-center text-red-700">
+                <div className="mb-6 bg-red-50 border border-red-100 rounded-xl p-4 flex items-center text-red-700">
                   <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
                   {error}
                 </div>
@@ -173,13 +227,13 @@ export default function Login() {
                     Email address
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <Mail className="h-5 w-5 text-gray-400" />
                     </div>
                     <input
                       {...register("email")}
                       type="email"
-                      className="block w-full pl-10 px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="block w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                       placeholder="Enter your email"
                     />
                     {errors.email && (
@@ -195,13 +249,13 @@ export default function Login() {
                     Password
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <Lock className="h-5 w-5 text-gray-400" />
                     </div>
                     <input
                       {...register("password")}
                       type="password"
-                      className="block w-full pl-10 px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="block w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                       placeholder="Enter your password"
                     />
                     {errors.password && (
@@ -233,7 +287,7 @@ export default function Login() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full flex justify-center items-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                   {isLoading ? (
                     <>
@@ -241,7 +295,10 @@ export default function Login() {
                       Signing in...
                     </>
                   ) : (
-                    "Sign in"
+                    <div className="flex items-center">
+                      Sign in
+                      <ArrowRight className="ml-2 w-4 h-4" />
+                    </div>
                   )}
                 </button>
               </form>
@@ -265,12 +322,12 @@ export default function Login() {
                       <button
                         key={account.email}
                         onClick={() => handleDemoLogin(account.email)}
-                        className="flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl hover:from-blue-100 hover:to-indigo-100 transition-all hover:scale-[1.05] group"
+                        className="group relative flex flex-col items-center justify-center p-4 rounded-xl bg-gray-50 hover:bg-gradient-to-br hover:from-blue-500 hover:to-blue-600 transition-all duration-300"
                       >
-                        <div className="p-3 bg-white rounded-lg shadow-sm mb-2">
-                          <Icon className="w-6 h-6 text-blue-600" />
+                        <div className="p-3 bg-white rounded-lg shadow-sm mb-2 group-hover:bg-blue-400 transition-all">
+                          <Icon className="w-5 h-5 text-blue-600 group-hover:text-white transition-colors" />
                         </div>
-                        <p className="font-medium text-gray-900 text-sm">
+                        <p className="font-medium text-gray-900 text-sm group-hover:text-white transition-colors">
                           {account.role}
                         </p>
                       </button>
