@@ -1,18 +1,13 @@
-import WorkerDashboard from "../components/WorkerDashboard";
-import OnBoardWorkers from "../components/OnBoardWorkers";
-import OffBoardWorkers from "../components/OffBoardWorkers";
-import Workers from "../components/Worker";
-
 import { useState } from "react";
+import HRMEmployee from "../../components/HRMEmployee";
+import HRMDashboard from "../../components/HrmDashBoard";
 
 export default function LaborManagement() {
-  const [activeTab, setActiveTab] = useState<string>("dashboard"); // ✅ Worker Dashboard is Default
+  const [activeTab, setActiveTab] = useState<string>("hrmdashboard"); // ✅ Worker Dashboard is Default
 
   const tabs = [
-    { id: "dashboard", label: "Worker Dashboard" },
-    { id: "workers", label: "Workers" },
-    { id: "onboard", label: "On-board Workers" },
-    { id: "offboard", label: "Off-board Workers" },
+    { id: "hrmdashboard", label: "HRM Dashboard" },
+    { id: "employees", label: "Employees" },
   ];
 
   return (
@@ -33,13 +28,10 @@ export default function LaborManagement() {
           </button>
         ))}
       </div>
-
       {/* ✅ Tab Content */}
-      <div className="p-6 bg-white shadow-lg rounded-xl">
-        {activeTab === "dashboard" && <WorkerDashboard />}
-        {activeTab === "workers" && <Workers />}
-        {activeTab === "onboard" && <OnBoardWorkers />}
-        {activeTab === "offboard" && <OffBoardWorkers />}
+      <div className="p-4 bg-white shadow-md rounded-lg">
+        {activeTab === "hrmdashboard" && <HRMDashboard />}
+        {activeTab === "employees" && <HRMEmployee />}
       </div>
     </div>
   );

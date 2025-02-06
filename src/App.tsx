@@ -1,42 +1,42 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useAuth } from './lib/auth';
-import AdminLayout from './components/AdminLayout';
-import WorkerLayout from './components/WorkerLayout';
-import Login from './pages/Login';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useAuth } from "./lib/auth";
+import AdminLayout from "./components/AdminLayout";
+import WorkerLayout from "./components/WorkerLayout";
+import Login from "./pages/Login";
 
 // Import existing components
-import Dashboard from './pages/Dashboard';
-import LaborManagement from './pages/LaborManagement';
-import FactoryManagement from './pages/FactoryManagement';
-import Reports from './pages/Reports';
-import UserManagement from './pages/UserManagement';
-import PaymentManagement from './pages/PaymentManagement';
-import AlertManagement from './pages/AlertManagement';
-import WageManagement from './pages/WageManagement';
-import LeaveManagement from './pages/LeaveManagement';
+import Dashboard from "./pages/Dashboard";
+import LaborManagement from "./pages/LaborManagement";
+import FactoryManagement from "./pages/HRM/FactoryManagement";
+import Reports from "./pages/Reports";
+import UserManagement from "./pages/UserManagement";
+import PaymentManagement from "./pages/PaymentManagement";
+import AlertManagement from "./pages/AlertManagement";
+import WageManagement from "./pages/WageManagement";
+import LeaveManagement from "./pages/LeaveManagement";
 
 // Worker Routes
-import WorkerDashboard from './pages/worker/Dashboard';
-import WorkerAttendance from './pages/worker/Attendance';
-import WorkerLeave from './pages/worker/Leave';
-import WorkerPerformance from './pages/worker/Performance';
-import WorkerSalaryHistory from './pages/worker/SalaryHistory';
+import WorkerDashboard from "./pages/worker/Dashboard";
+import WorkerAttendance from "./pages/worker/Attendance";
+import WorkerLeave from "./pages/worker/Leave";
+import WorkerPerformance from "./pages/worker/Performance";
+import WorkerSalaryHistory from "./pages/worker/SalaryHistory";
 
 // Supervisor Routes
-import SupervisorDashboard from './pages/supervisor/Dashboard';
-import SupervisorAttendance from './pages/supervisor/Attendance';
-import SupervisorPerformance from './pages/supervisor/Performance';
-import SupervisorLeave from './pages/supervisor/Leave';
+import SupervisorDashboard from "./pages/supervisor/Dashboard";
+import SupervisorAttendance from "./pages/supervisor/Attendance";
+import SupervisorPerformance from "./pages/supervisor/Performance";
+import SupervisorLeave from "./pages/supervisor/Leave";
 
 // Factory Manager Routes
-import FactoryDashboard from './pages/factory/Dashboard';
-import FactoryAttendance from './pages/factory/Attendance';
-import FactoryPerformance from './pages/factory/Performance';
+import FactoryDashboard from "./pages/factory/Dashboard";
+import FactoryAttendance from "./pages/factory/Attendance";
+import FactoryPerformance from "./pages/factory/Performance";
 
 // Accountant Routes
-import AccountsDashboard from './pages/accounts/Dashboard';
-import AccountsInvoices from './pages/accounts/Invoices';
-import AccountsPayments from './pages/accounts/Payments';
+import AccountsDashboard from "./pages/accounts/Dashboard";
+import AccountsInvoices from "./pages/accounts/Invoices";
+import AccountsPayments from "./pages/accounts/Payments";
 
 export default function App() {
   const { user } = useAuth();
@@ -56,7 +56,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         {/* Admin Routes */}
-        {user.role === 'admin' && (
+        {user.role === "admin" && (
           <Route path="/" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="labor" element={<LaborManagement />} />
@@ -71,7 +71,7 @@ export default function App() {
         )}
 
         {/* Worker Routes */}
-        {user.role === 'worker' && (
+        {user.role === "worker" && (
           <Route path="/" element={<WorkerLayout />}>
             <Route index element={<WorkerDashboard />} />
             <Route path="attendance" element={<WorkerAttendance />} />
@@ -82,7 +82,7 @@ export default function App() {
         )}
 
         {/* Supervisor Routes */}
-        {user.role === 'supervisor' && (
+        {user.role === "supervisor" && (
           <Route path="/" element={<WorkerLayout />}>
             <Route index element={<SupervisorDashboard />} />
             <Route path="attendance" element={<SupervisorAttendance />} />
@@ -93,7 +93,7 @@ export default function App() {
         )}
 
         {/* Factory Manager Routes */}
-        {user.role === 'manager' && (
+        {user.role === "manager" && (
           <Route path="/" element={<WorkerLayout />}>
             <Route index element={<FactoryDashboard />} />
             <Route path="attendance" element={<FactoryAttendance />} />
@@ -103,7 +103,7 @@ export default function App() {
         )}
 
         {/* Accountant Routes */}
-        {user.role === 'accountant' && (
+        {user.role === "accountant" && (
           <Route path="/" element={<WorkerLayout />}>
             <Route index element={<AccountsDashboard />} />
             <Route path="invoices" element={<AccountsInvoices />} />
