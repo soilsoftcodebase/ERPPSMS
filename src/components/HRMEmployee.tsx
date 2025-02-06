@@ -1,315 +1,291 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import DataTable from "../components/DataTable";
 import Modal from "../components/Modal";
-import { workers, factories, users } from "../lib/data";
-import type { Worker } from "../lib/types";
-import { Phone, MessageSquare } from "lucide-react";
+import { Share2, FileText } from "lucide-react";
 
-// ✅ Worker form validation schema
-const workerSchema = z.object({
+// Define an Employee type
+type Employee = {
+  id: string;
+  name: string;
+  mobile: string;
+  department: string;
+  experience: number; // in years
+};
+
+// Dummy employee data
+const initialEmployees: Employee[] = [
+  {
+    id: "emp1",
+    name: "John Doe",
+    mobile: "1234567890",
+    department: "Sales",
+    experience: 5,
+  },
+  {
+    id: "emp2",
+    name: "Jane Smith",
+    mobile: "9876543210",
+    department: "HR",
+    experience: 3,
+  },
+  {
+    id: "emp3",
+    name: "Mike Johnson",
+    mobile: "5551234567",
+    department: "Engineering",
+    experience: 7,
+  },
+  {
+    id: "emp4",
+    name: "Alice Brown",
+    mobile: "1112223333",
+    department: "Marketing",
+    experience: 4,
+  },
+];
+
+// Dummy department options
+const departments = ["Sales", "HR", "Engineering", "Marketing"];
+
+// Employee form validation schema using zod
+const employeeSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email").optional(),
-  phone: z.string().min(1, "Phone number is required"),
-  emergencyContact: z.string().min(1, "Emergency Contact is required"),
-  aadhar: z.any().optional(),
-  pan: z.any().optional(),
-  rationCard: z.any().optional(),
-  factory: z.string().min(1, "Factory is required"),
-  supervisor: z.string().min(1, "Supervisor is required"),
-  shift: z.string().min(1, "Shift is required"),
-  bankAccountName: z.string().min(1, "Bank Account Name is required"),
-  bankAccountNumber: z.string().min(1, "Bank Account Number is required"),
-  bankName: z.string().min(1, "Bank Name is required"),
-  status: z.enum(["On-boarding", "Off-boarding"]),
-  hourlyRate: z.number().min(0, "Hourly rate must be positive"),
+  mobile: z.string().min(1, "Mobile is required"),
+  department: z.string().min(1, "Department is required"),
+  experience: z.preprocess(
+    (val) => (typeof val === "string" ? parseFloat(val) : val),
+    z.number().min(0, "Experience must be non-negative")
+  ),
 });
 
-type WorkerFormData = z.infer<typeof workerSchema>;
+type EmployeeFormData = z.infer<typeof employeeSchema>;
 
-export default function Workers() {
+export default function HRMEmployee() {
+  // State for employees list
+  const [employeesList, setEmployeesList] =
+    useState<Employee[]>(initialEmployees);
+
+  // States for filtering
+  const [selectedDepartment, setSelectedDepartment] = useState("");
+  const [selectedEmployee, setSelectedEmployee] = useState("");
+
+  // State for modal
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingWorker, setEditingWorker] = useState<Worker | null>(null);
 
+  // React Hook Form setup for adding a new employee
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<WorkerFormData>({
-    resolver: zodResolver(workerSchema),
+  } = useForm<EmployeeFormData>({
+    resolver: zodResolver(employeeSchema),
   });
 
-  const handleEdit = (worker: Worker) => {
-    setEditingWorker(worker);
-    reset(worker);
-    setIsModalOpen(true);
-  };
-
-  const onSubmit = async (data: WorkerFormData) => {
-    console.log(editingWorker ? "Updating worker:" : "Creating worker:", data);
-    setIsModalOpen(false);
-    reset();
-  };
-
+  // Columns for the DataTable
   const columns = [
-    { key: "name", label: "Name", className: "w-32 md:w-48" },
-    { key: "phone", label: "Phone", className: "w-32 md:w-48" },
-    { key: "factory", label: "Factory", className: "w-32 md:w-48" },
-    { key: "supervisor", label: "Supervisor", className: "w-32 md:w-48" },
-    { key: "shift", label: "Shift", className: "w-32 md:w-48" },
+    { key: "name", label: "Name" },
+    { key: "mobile", label: "Mobile" },
+    { key: "department", label: "Department" },
     {
-      key: "status",
-      label: "Status",
-      className: "w-24 text-center",
-      render: (value: string) => (
-        <span
-          className={`px-2 py-1 rounded-full text-xs font-bold whitespace-nowrap ${
-            value === "On-board"
-              ? "bg-green-500 text-white" // ✅ Green for On-board
-              : value === "Off-board"
-              ? "bg-red-500 text-white" // ✅ Red for Off-board
-              : "bg-gray-300 text-gray-800" // Default gray for any other status
-          }`}
-        >
-          {value}
-        </span>
-      ),
-    },
-    {
-      key: "hourlyRate",
-      label: "Hourly Wage",
-      className: "w-32 md:w-48",
-      render: (value: number) => `₹${value.toFixed(2)}`,
+      key: "experience",
+      label: "Experience",
+      render: (value: number) => `${value} years`,
     },
     {
       key: "actions",
-      label: "Actions",
-      className: "w-32 text-center",
-      render: (_: any, worker: Worker) => (
-        <div className="flex space-x-2 justify-start">
-          <button
-            onClick={() => handleEdit(worker)}
-            className="text-blue-600 hover:text-blue-800"
-          >
-            Edit
-          </button>
-          <button
-            onClick={() => (window.location.href = `tel:${worker.phone}`)}
-            className="text-green-600 hover:text-green-800"
-          >
-            <Phone size={16} />
-          </button>
-          <button
-            onClick={() => (window.location.href = `sms:${worker.phone}`)}
-            className="text-purple-600 hover:text-purple-800"
-          >
-            <MessageSquare size={16} />
-          </button>
-        </div>
+      label: "Action",
+      render: (_: any, employee: Employee) => (
+        <button className="text-blue-600 hover:text-blue-800">Edit</button>
       ),
     },
   ];
 
+  // Filter the employees list based on select box choices
+  const filteredData = employeesList.filter((emp) => {
+    return (
+      (selectedDepartment === "" || emp.department === selectedDepartment) &&
+      (selectedEmployee === "" || emp.id === selectedEmployee)
+    );
+  });
+
+  // Handle form submission for adding a new employee
+  const onSubmit = (data: EmployeeFormData) => {
+    // Generate a new unique ID (simple approach)
+    const newId = `emp${employeesList.length + 1}`;
+    const newEmployee: Employee = { id: newId, ...data };
+    setEmployeesList((prev) => [...prev, newEmployee]);
+    setIsModalOpen(false);
+    reset();
+  };
+
   return (
-    <div>
+    <div className="p-6">
+      {/* Header Section */}
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-bold">Workers</h1>
+        {/* Title */}
+        <h1 className="text-xl font-bold">Employees</h1>
+
+        {/* Right side: Share and Export as PDF */}
+        <div className="flex space-x-4">
+          <button className="flex items-center bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700">
+            <Share2 size={16} className="mr-2" />
+            Share
+          </button>
+          <button className="flex items-center bg-green-600 text-white px-3 py-2 rounded hover:bg-green-700">
+            <FileText size={16} className="mr-2" />
+            Export as PDF
+          </button>
+        </div>
+      </div>
+
+      {/* Add Employee Button */}
+      <div className="flex items-center space-x-4 mb-4">
         <button
-          onClick={() => {
-            setEditingWorker(null);
-            setIsModalOpen(true);
-          }}
+          onClick={() => setIsModalOpen(true)}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
         >
-          Add Worker
+          Add Employee
         </button>
       </div>
 
-      {/* ✅ Responsive Table with Horizontal Scroll for Small Screens */}
-      <div className="overflow-x-auto">
-        <DataTable columns={columns} data={workers} />
+      {/* Filter Section */}
+      <div className="mb-4 flex space-x-4">
+        <select
+          value={selectedDepartment}
+          onChange={(e) => setSelectedDepartment(e.target.value)}
+          className="p-2 border rounded-md"
+        >
+          <option value="">Select Department</option>
+          {departments.map((dept) => (
+            <option key={dept} value={dept}>
+              {dept}
+            </option>
+          ))}
+        </select>
+        <select
+          value={selectedEmployee}
+          onChange={(e) => setSelectedEmployee(e.target.value)}
+          className="p-2 border rounded-md"
+        >
+          <option value="">Select Employee</option>
+          {employeesList.map((emp) => (
+            <option key={emp.id} value={emp.id}>
+              {emp.name}
+            </option>
+          ))}
+        </select>
       </div>
 
-      {/* ✅ Full-Screen Add/Edit Worker Modal */}
+      {/* Data Table */}
+      <div className="overflow-x-auto">
+        <DataTable columns={columns} data={filteredData} />
+      </div>
+
+      {/* Modal for Adding Employee */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => {
           setIsModalOpen(false);
           reset();
         }}
-        title={editingWorker ? "Edit Worker" : "Add Worker"}
-        fullScreen={true} // ✅ Full-Screen Modal
+        title="Add Employee"
       >
-        <div className="max-w-5xl mx-auto bg-white p-10 rounded-xl shadow-lg">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-            {/* Personal Data */}
-            <div className="border-b pb-4">
-              <h2 className="text-xl font-semibold text-gray-700 mb-4">
-                Personal Details
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-gray-600">
-                    Name (as per Aadhaar)
-                  </label>
-                  <input
-                    type="text"
-                    {...register("name")}
-                    placeholder="Full Name"
-                    className="w-full p-2 border rounded-md"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-600">Email</label>
-                  <input
-                    type="email"
-                    {...register("email")}
-                    placeholder="Email Address"
-                    className="w-full p-2 border rounded-md"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-600">Phone</label>
-                  <input
-                    type="text"
-                    {...register("phone")}
-                    placeholder="Phone Number"
-                    className="w-full p-2 border rounded-md"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-600">Address</label>
-                  <input
-                    type="text"
-                    {...register("address")}
-                    placeholder="Residential Address"
-                    className="w-full p-2 border rounded-md"
-                  />
-                </div>
-              </div>
-            </div>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Name
+            </label>
+            <input
+              type="text"
+              {...register("name")}
+              placeholder="Employee Name"
+              className="mt-1 block w-full p-2 border rounded-md"
+            />
+            {errors.name && (
+              <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+            )}
+          </div>
 
-            {/* KYC Details */}
-            <div className="border-b pb-4">
-              <h2 className="text-xl font-semibold text-gray-700 mb-4">
-                KYC Details
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-gray-600">Aadhaar</label>
-                  <input
-                    type="file"
-                    {...register("aadhar")}
-                    className="w-full p-2 border rounded-md"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-600">PAN</label>
-                  <input
-                    type="file"
-                    {...register("pan")}
-                    className="w-full p-2 border rounded-md"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-600">Ration Card</label>
-                  <input
-                    type="file"
-                    {...register("rationCard")}
-                    className="w-full p-2 border rounded-md"
-                  />
-                </div>
-              </div>
-            </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Mobile
+            </label>
+            <input
+              type="text"
+              {...register("mobile")}
+              placeholder="Mobile Number"
+              className="mt-1 block w-full p-2 border rounded-md"
+            />
+            {errors.mobile && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.mobile.message}
+              </p>
+            )}
+          </div>
 
-            {/* Bank Details */}
-            <div className="border-b pb-4">
-              <h2 className="text-xl font-semibold text-gray-700 mb-4">
-                Bank Details
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-gray-600">
-                    Bank Account Number
-                  </label>
-                  <input
-                    type="text"
-                    {...register("bankAccount")}
-                    placeholder="Bank Account Number"
-                    className="w-full p-2 border rounded-md"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-600">IFSC Code</label>
-                  <input
-                    type="text"
-                    {...register("ifscCode")}
-                    placeholder="IFSC Code"
-                    className="w-full p-2 border rounded-md"
-                  />
-                </div>
-              </div>
-            </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Department
+            </label>
+            <select
+              {...register("department")}
+              className="mt-1 block w-full p-2 border rounded-md"
+            >
+              <option value="">Select Department</option>
+              {departments.map((dept) => (
+                <option key={dept} value={dept}>
+                  {dept}
+                </option>
+              ))}
+            </select>
+            {errors.department && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.department.message}
+              </p>
+            )}
+          </div>
 
-            {/* Factory Details */}
-            <div>
-              <h2 className="text-xl font-semibold text-gray-700 mb-4">
-                Factory Details
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-gray-600">Factory</label>
-                  <select
-                    {...register("factory")}
-                    className="w-full p-2 border rounded-md"
-                  >
-                    <option value="">Select Factory</option>
-                    {factories.map((factory) => (
-                      <option key={factory.id} value={factory.name}>
-                        {factory.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-gray-600">Supervisor</label>
-                  <select
-                    {...register("supervisor")}
-                    className="w-full p-2 border rounded-md"
-                  >
-                    <option value="">Select Supervisor</option>
-                    {users
-                      .filter((user) => user.role === "supervisor")
-                      .map((supervisor) => (
-                        <option key={supervisor.id} value={supervisor.name}>
-                          {supervisor.name}
-                        </option>
-                      ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-gray-600">Shift</label>
-                  <input
-                    type="text"
-                    {...register("shift")}
-                    placeholder="Morning / Evening"
-                    className="w-full p-2 border rounded-md"
-                  />
-                </div>
-              </div>
-            </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Experience
+            </label>
+            <input
+              type="number"
+              step="0.1"
+              {...register("experience")}
+              placeholder="Years of Experience"
+              className="mt-1 block w-full p-2 border rounded-md"
+            />
+            {errors.experience && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.experience.message}
+              </p>
+            )}
+          </div>
 
+          <div className="flex space-x-4">
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+              className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
             >
-              {editingWorker ? "Update" : "Add"} Worker
+              Add Employee
             </button>
-          </form>
-        </div>
+            <button
+              type="button"
+              onClick={() => {
+                setIsModalOpen(false);
+                reset();
+              }}
+              className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </Modal>
     </div>
   );
