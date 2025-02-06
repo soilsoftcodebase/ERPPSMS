@@ -8,17 +8,33 @@ type Contract = {
   fileUrl: string;
 };
 
-// Default static contract object referencing a PDF in the public folder
-const staticContract: Contract = {
-  id: "static1",
-  name: "Sample Contract.pdf",
-  file: null,
-  fileUrl: "/sample.pdf", // Ensure sample.pdf exists in your public folder
-};
+// Default static contracts referencing PDFs in the public folder
+const staticContracts: Contract[] = [
+  {
+    id: "static1",
+    name: "Contract Agreement.pdf",
+    file: null,
+    fileUrl: "/contractagreement.pdf",
+  },
+  {
+    id: "static2",
+    name: "Legal Agreement.pdf",
+    file: null,
+    fileUrl: "/legalagreement.pdf",
+  },
+  {
+    id: "static3",
+    name: "Company Contract.pdf",
+    file: null,
+    fileUrl: "/companycontract.pdf",
+  },
+  // Ensure these PDFs exist in your public folder
+];
 
 export default function ContractAgreementsPage() {
-  // State to store the current contract; initially set to the static contract
-  const [contract, setContract] = useState<Contract>(staticContract);
+  // State to store the current contract; initially set to the first static contract
+  const [contract, setContract] = useState<Contract>(staticContracts[0]);
+  const [error, setError] = useState<string | null>(null);
 
   // Handle file upload via the hidden file input (only accepts PDF files)
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,7 +42,7 @@ export default function ContractAgreementsPage() {
     if (files && files.length > 0) {
       const file = files[0];
       if (file.type !== "application/pdf") {
-        alert("Please upload a PDF document.");
+        setError("Please upload a PDF document.");
         return;
       }
       // Create a new contract object using the uploaded file and generate an object URL
@@ -37,6 +53,7 @@ export default function ContractAgreementsPage() {
         fileUrl: URL.createObjectURL(file),
       };
       setContract(newContract);
+      setError(null);
     }
   };
 
@@ -88,6 +105,27 @@ export default function ContractAgreementsPage() {
           </label>
         </div>
       </header>
+
+      {/* Error Message */}
+      {error && <div className="mb-4 text-red-600">{error}</div>}
+
+      {/* Contract Selection */}
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold text-gray-700 mb-4">Select a Contract</h2>
+        <div className="flex space-x-4">
+          {staticContracts.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => setContract(c)}
+              className={`px-4 py-2 rounded-lg shadow transition-colors ${
+                contract.id === c.id ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"
+              }`}
+            >
+              {c.name}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {/* Contract Display Card */}
       <div className="bg-white p-6 rounded-xl shadow-lg">

@@ -24,6 +24,28 @@ const initialComplaints: Complaint[] = [
     supervisor: "Santosh",
     assigne: "-",
   },
+  {
+    id: "cmp2",
+    issue: "Late delivery",
+    client: "Mahindra",
+    issueDate: "10/03/2025",
+    issueType: "Delivery",
+    status: "Pending",
+    issueOn: "supplier",
+    supervisor: "Rajesh",
+    assigne: "Amit",
+  },
+  {
+    id: "cmp3",
+    issue: "Quality issue",
+    client: "Hyundai",
+    issueDate: "15/04/2025",
+    issueType: "Quality",
+    status: "Resolved",
+    issueOn: "product",
+    supervisor: "Suresh",
+    assigne: "Vijay",
+  },
 ];
 
 export default function ComplaintsDisputesPage() {
