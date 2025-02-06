@@ -1,11 +1,13 @@
-import { useState } from 'react';
-import FinanceDashboard from '../components/FinanceDashboard';
+import { useState } from "react";
+import FinanceDashboard from "./admin/Finance/FinanceDashboard";
 
 export default function FinanceManagement() {
-  const [activeTab, setActiveTab] = useState<string>('finance'); 
+  const [activeTab, setActiveTab] = useState<string>("finance");
 
   const tabs = [
-    { id: 'financedashboard', label: 'Finance' },
+    { id: "financedashboard", label: "Finance" },
+    { id: "clientfinance", label: "Client Finance" },
+    { id: "HouseFinance", label: "In House Finance" },
   ];
 
   return (
@@ -18,8 +20,8 @@ export default function FinanceManagement() {
             onClick={() => setActiveTab(tab.id)}
             className={`px-4 py-2 text-sm font-medium transition-all duration-300 ${
               activeTab === tab.id
-                ? 'border-b-2 border-blue-600 text-blue-600 font-semibold'
-                : 'border-transparent text-gray-600 hover:text-blue-600'
+                ? "border-b-2 border-blue-600 text-blue-600 font-semibold"
+                : "border-transparent text-gray-600 hover:text-blue-600"
             }`}
           >
             {tab.label}
@@ -29,7 +31,9 @@ export default function FinanceManagement() {
 
       {/* ✅ Tab Content */}
       <div className="p-4 bg-white shadow-md rounded-lg">
-        {activeTab === 'dashboard' && <FinanceDashboard />}
+        {activeTab === "financedashboard" && <FinanceDashboard />}
+        {activeTab === "clientfinance" && <FinanceDashboard />}
+        {activeTab === "HouseFinance" && <FinanceDashboard />}
       </div>
     </div>
   );
