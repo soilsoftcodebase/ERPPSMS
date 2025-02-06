@@ -8,7 +8,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import LaborManagement from "./pages/LaborManagement";
 import FactoryManagement from "./pages/admin/HRM/FactoryManagement";
-import FinanceManagement from "./pages/admin/HRM/FinanceManagement";
+import FinanceManagement from "./pages/admin/Finance/FinanceManagement";
 import Reports from "./pages/Reports";
 import UserManagement from "./pages/UserManagement";
 import PaymentManagement from "./pages/PaymentManagement";
