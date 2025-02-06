@@ -169,7 +169,7 @@ export default function AlertManagement() {
       {/* Header */}
       <header className="flex flex-col md:flex-row md:justify-between md:items-center">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
-          Alert Management
+          Settings & User Management
         </h1>
         <div className="mt-4 md:mt-0 flex space-x-4">
           <button

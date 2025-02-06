@@ -7,9 +7,6 @@ export default function ReportsManagement() {
 
   const tabs = [
     { id: "dashboard", label: "Reports & Analytics Dashboard" },
-    // { id: "clientmanagement", label: "Client Management" },
-    // { id: "contract", label: "Contracts & Agreements" },
-    // { id: "complaints", label: "Complaints & Disputes" },
   ];
 
   return (
@@ -34,9 +31,6 @@ export default function ReportsManagement() {
       {/* ✅ Tab Content */}
       <div className="p-6 bg-white shadow-lg rounded-xl">
         {activeTab === "dashboard" && <ReportsDashboard />}
-        {/* {activeTab === "clientmanagement" && <ClientManagement />}
-        {activeTab === "contract" && <ContractAgrements />}
-        {activeTab === "complaints" && <Complaints />} */}
       </div>
     </div>
   );

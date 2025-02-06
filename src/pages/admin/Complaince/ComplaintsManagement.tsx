@@ -7,9 +7,6 @@ export default function CRMManagement() {
 
   const tabs = [
     { id: "dashboard", label: "Compliance Dashboard & Alerts" },
-    // { id: "clientmanagement", label: "Client Management" },
-    // { id: "contract", label: "Contracts & Agreements" },
-    // { id: "complaints", label: "Complaints & Disputes" },
   ];
 
   return (
@@ -34,9 +31,6 @@ export default function CRMManagement() {
       {/* ✅ Tab Content */}
       <div className="p-6 bg-white shadow-lg rounded-xl">
         {activeTab === "dashboard" && <ComplaintsDashboard />}
-        {/* {activeTab === "clientmanagement" && <ClientManagement />}
-        {activeTab === "contract" && <ContractAgrements />}
-        {activeTab === "complaints" && <Complaints />} */}
       </div>
     </div>
   );
