@@ -1,12 +1,11 @@
 import { useState } from "react";
-import HRMEmployee from "../../components/HRMEmployee";
-import HRMDashboard from "../../components/HrmDashBoard";
+import FinanceDashboard from "../../../components/FinanceDashboard";
 
-export default function LaborManagement() {
-  const [activeTab, setActiveTab] = useState<string>("hrmdashboard"); // ✅ Worker Dashboard is Default
+export default function FinanceManagement() {
+  const [activeTab, setActiveTab] = useState<string>("financedashboard");
 
   const tabs = [
-    { id: "hrmdashboard", label: "HRM Dashboard" },
+    { id: "financedashboard", label: "Finance Dashboard" },
     { id: "employees", label: "Employees" },
   ];
 
@@ -28,10 +27,11 @@ export default function LaborManagement() {
           </button>
         ))}
       </div>
+
       {/* ✅ Tab Content */}
       <div className="p-4 bg-white shadow-md rounded-lg">
-        {activeTab === "hrmdashboard" && <HRMDashboard />}
-        {activeTab === "employees" && <HRMEmployee />}
+        {activeTab === "dashboard" && <FinanceDashboard />}
+        {activeTab === "employees" && <FinanceDashboard />}
       </div>
     </div>
   );
