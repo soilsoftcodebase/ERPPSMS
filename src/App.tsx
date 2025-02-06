@@ -16,6 +16,9 @@ import AlertManagement from "./pages/AlertManagement";
 import WageManagement from "./pages/WageManagement";
 import LeaveManagement from "./pages/LeaveManagement";
 import CRMManagement from "./pages/admin/CRM/CRMManagement";
+import ComplaintsManagement from "./pages/admin/Complaince/ComplaintsManagement";
+import ReportsManagement from "./pages/admin/Reports&Analytics/ReportsManagement";
+import IntegrationsDashboard from "./pages/admin/Integrationss/IntegrationsDashboard";
 
 // Worker Routes
 import WorkerDashboard from "./pages/worker/Dashboard";
@@ -64,10 +67,10 @@ export default function App() {
             <Route path="labor" element={<LaborManagement />} />
             <Route path="factories" element={<FactoryManagement />} />
             <Route path="crm" element={<CRMManagement />} />
-            <Route path="users" element={<UserManagement />} />
-            <Route path="payments" element={<PaymentManagement />} />
+            <Route path="users" element={<ComplaintsManagement />} />
+            <Route path="payments" element={<ReportsManagement />} />
             <Route path="alerts" element={<AlertManagement />} />
-            <Route path="wages" element={<WageManagement />} />
+            <Route path="wages" element={<IntegrationsDashboard />} />
             <Route path="leave-approvals" element={<LeaveManagement />} />
             <Route path="finance" element={<FinanceManagement />} />
           </Route>
