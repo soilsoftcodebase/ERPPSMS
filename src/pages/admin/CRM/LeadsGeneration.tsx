@@ -115,7 +115,7 @@ const LeadGeneration: React.FC = () => {
         <h2 className="text-2xl font-semibold mb-3">Market Trends</h2>
         <p className="mb-4">
           The pie chart below illustrates current market demands based on
-          in-demand skills.
+          in-demand skills. Suppliers can use this data to align their offerings
         </p>
         <div style={{ width: "100%", height: 400 }}>
           <ResponsiveContainer>
