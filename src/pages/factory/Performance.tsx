@@ -1,7 +1,14 @@
-import React, { useState } from 'react';
-import { TrendingUp, Award, Target, Star, BarChart, Search } from 'lucide-react';
-import DataTable from '../../components/DataTable';
-import { workers } from '../../lib/data';
+// import React, { useState } from 'react';
+import {
+  TrendingUp,
+  Award,
+  Target,
+  Star,
+  BarChart,
+  Search,
+} from "lucide-react";
+import DataTable from "../../components/DataTable";
+import { workers } from "../../lib/data";
 
 interface PerformanceRecord {
   id: string;
@@ -22,48 +29,50 @@ interface DepartmentMetric {
 }
 
 export default function FactoryPerformance() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedDepartment, setSelectedDepartment] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("all");
 
   // Mock performance data
   const [performanceRecords] = useState<PerformanceRecord[]>(
-    workers.map(worker => ({
+    workers.map((worker) => ({
       id: worker.id,
       name: worker.name,
-      department: ['Production', 'Assembly', 'Quality Control'][Math.floor(Math.random() * 3)],
+      department: ["Production", "Assembly", "Quality Control"][
+        Math.floor(Math.random() * 3)
+      ],
       rating: 3 + Math.random() * 2,
       efficiency: 75 + Math.random() * 25,
       qualityScore: 80 + Math.random() * 20,
-      supervisor: worker.supervisor || 'Unassigned',
-      lastReview: '2024-03-20',
+      supervisor: worker.supervisor || "Unassigned",
+      lastReview: "2024-03-20",
     }))
   );
 
-  const departments = ['Production', 'Assembly', 'Quality Control'];
+  const departments = ["Production", "Assembly", "Quality Control"];
 
-  const departmentMetrics: DepartmentMetric[] = departments.map(dept => ({
+  const departmentMetrics: DepartmentMetric[] = departments.map((dept) => ({
     name: dept,
     efficiency: Math.round(
       performanceRecords
-        .filter(r => r.department === dept)
+        .filter((r) => r.department === dept)
         .reduce((sum, r) => sum + r.efficiency, 0) /
-      performanceRecords.filter(r => r.department === dept).length
+        performanceRecords.filter((r) => r.department === dept).length
     ),
     quality: Math.round(
       performanceRecords
-        .filter(r => r.department === dept)
+        .filter((r) => r.department === dept)
         .reduce((sum, r) => sum + r.qualityScore, 0) /
-      performanceRecords.filter(r => r.department === dept).length
+        performanceRecords.filter((r) => r.department === dept).length
     ),
     target: 90,
   }));
 
   const columns = [
-    { key: 'name', label: 'Name' },
-    { key: 'department', label: 'Department' },
-    { 
-      key: 'rating', 
-      label: 'Rating',
+    { key: "name", label: "Name" },
+    { key: "department", label: "Department" },
+    {
+      key: "rating",
+      label: "Rating",
       render: (value: number) => (
         <div className="flex items-center">
           <span className="mr-2">{value.toFixed(1)}</span>
@@ -71,51 +80,61 @@ export default function FactoryPerformance() {
             <Star
               key={index}
               size={16}
-              className={index < Math.floor(value) ? 'text-yellow-400 fill-current' : 'text-gray-300'}
+              className={
+                index < Math.floor(value)
+                  ? "text-yellow-400 fill-current"
+                  : "text-gray-300"
+              }
             />
           ))}
         </div>
-      )
+      ),
     },
-    { 
-      key: 'efficiency', 
-      label: 'Efficiency',
+    {
+      key: "efficiency",
+      label: "Efficiency",
       render: (value: number) => (
         <div className="flex items-center space-x-2">
           <span>{value.toFixed(1)}%</span>
           <div className="w-20 bg-gray-200 rounded-full h-2">
-            <div 
-              className={`h-2 rounded-full ${value >= 90 ? 'bg-green-600' : 'bg-yellow-600'}`}
+            <div
+              className={`h-2 rounded-full ${
+                value >= 90 ? "bg-green-600" : "bg-yellow-600"
+              }`}
               style={{ width: `${value}%` }}
             ></div>
           </div>
         </div>
-      )
+      ),
     },
-    { 
-      key: 'qualityScore', 
-      label: 'Quality Score',
-      render: (value: number) => `${value.toFixed(1)}%`
+    {
+      key: "qualityScore",
+      label: "Quality Score",
+      render: (value: number) => `${value.toFixed(1)}%`,
     },
-    { key: 'supervisor', label: 'Supervisor' },
-    { 
-      key: 'lastReview', 
-      label: 'Last Review',
-      render: (value: string) => new Date(value).toLocaleDateString()
+    { key: "supervisor", label: "Supervisor" },
+    {
+      key: "lastReview",
+      label: "Last Review",
+      render: (value: string) => new Date(value).toLocaleDateString(),
     },
   ];
 
-  const filteredRecords = performanceRecords.filter(record =>
-    record.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-    (selectedDepartment === 'all' || record.department === selectedDepartment)
+  const filteredRecords = performanceRecords.filter(
+    (record) =>
+      record.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (selectedDepartment === "all" || record.department === selectedDepartment)
   );
 
   const calculateAverageRating = () => {
-    return (filteredRecords.reduce((sum, r) => sum + r.rating, 0) / filteredRecords.length).toFixed(1);
+    return (
+      filteredRecords.reduce((sum, r) => sum + r.rating, 0) /
+      filteredRecords.length
+    ).toFixed(1);
   };
 
   const calculateTopPerformers = () => {
-    return filteredRecords.filter(r => r.rating >= 4.5).length;
+    return filteredRecords.filter((r) => r.rating >= 4.5).length;
   };
 
   return (
@@ -127,22 +146,32 @@ export default function FactoryPerformance() {
         <div className="bg-white p-6 rounded-lg shadow-sm">
           <TrendingUp className="w-8 h-8 mb-2 text-blue-600" />
           <h3 className="text-gray-500 text-sm font-medium">Average Rating</h3>
-          <p className="text-2xl font-semibold mt-1">{calculateAverageRating()}/5.0</p>
+          <p className="text-2xl font-semibold mt-1">
+            {calculateAverageRating()}/5.0
+          </p>
           <p className="text-sm text-green-600 mt-1">↑ 0.2 from last month</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-sm">
           <Award className="w-8 h-8 mb-2 text-purple-600" />
           <h3 className="text-gray-500 text-sm font-medium">Top Performers</h3>
-          <p className="text-2xl font-semibold mt-1">{calculateTopPerformers()}</p>
+          <p className="text-2xl font-semibold mt-1">
+            {calculateTopPerformers()}
+          </p>
           <p className="text-sm text-gray-500 mt-1">Above 4.5 rating</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-sm">
           <Target className="w-8 h-8 mb-2 text-green-600" />
-          <h3 className="text-gray-500 text-sm font-medium">Overall Efficiency</h3>
+          <h3 className="text-gray-500 text-sm font-medium">
+            Overall Efficiency
+          </h3>
           <p className="text-2xl font-semibold mt-1">
-            {Math.round(filteredRecords.reduce((sum, r) => sum + r.efficiency, 0) / filteredRecords.length)}%
+            {Math.round(
+              filteredRecords.reduce((sum, r) => sum + r.efficiency, 0) /
+                filteredRecords.length
+            )}
+            %
           </p>
           <p className="text-sm text-yellow-600 mt-1">Target: 90%</p>
         </div>
@@ -151,7 +180,11 @@ export default function FactoryPerformance() {
           <BarChart className="w-8 h-8 mb-2 text-yellow-600" />
           <h3 className="text-gray-500 text-sm font-medium">Quality Score</h3>
           <p className="text-2xl font-semibold mt-1">
-            {Math.round(filteredRecords.reduce((sum, r) => sum + r.qualityScore, 0) / filteredRecords.length)}%
+            {Math.round(
+              filteredRecords.reduce((sum, r) => sum + r.qualityScore, 0) /
+                filteredRecords.length
+            )}
+            %
           </p>
           <p className="text-sm text-green-600 mt-1">Above target</p>
         </div>
@@ -172,20 +205,30 @@ export default function FactoryPerformance() {
                   <p className="text-sm text-gray-500 mb-1">Efficiency</p>
                   <div className="flex items-center space-x-2">
                     <div className="flex-grow bg-gray-200 rounded-full h-2">
-                      <div 
-                        className={`h-2 rounded-full ${dept.efficiency >= dept.target ? 'bg-green-600' : 'bg-yellow-600'}`}
+                      <div
+                        className={`h-2 rounded-full ${
+                          dept.efficiency >= dept.target
+                            ? "bg-green-600"
+                            : "bg-yellow-600"
+                        }`}
                         style={{ width: `${dept.efficiency}%` }}
                       ></div>
                     </div>
-                    <span className="text-sm font-medium">{dept.efficiency}%</span>
+                    <span className="text-sm font-medium">
+                      {dept.efficiency}%
+                    </span>
                   </div>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 mb-1">Quality</p>
                   <div className="flex items-center space-x-2">
                     <div className="flex-grow bg-gray-200 rounded-full h-2">
-                      <div 
-                        className={`h-2 rounded-full ${dept.quality >= dept.target ? 'bg-green-600' : 'bg-yellow-600'}`}
+                      <div
+                        className={`h-2 rounded-full ${
+                          dept.quality >= dept.target
+                            ? "bg-green-600"
+                            : "bg-yellow-600"
+                        }`}
                         style={{ width: `${dept.quality}%` }}
                       ></div>
                     </div>
@@ -210,8 +253,10 @@ export default function FactoryPerformance() {
                 className="rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               >
                 <option value="all">All Departments</option>
-                {departments.map(dept => (
-                  <option key={dept} value={dept}>{dept}</option>
+                {departments.map((dept) => (
+                  <option key={dept} value={dept}>
+                    {dept}
+                  </option>
                 ))}
               </select>
             </div>

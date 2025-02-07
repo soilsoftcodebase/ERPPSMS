@@ -13,6 +13,8 @@ export default function CRMManagement() {
     { id: "clientmanagement", label: "Client Management" },
     { id: "contract", label: "Contracts & Agreements" },
     { id: "complaints", label: "Complaints & Disputes" },
+    { id: "requests", label: "Requests" },
+    { id: "leadsai", label: "Leads Generation" },
   ];
 
   return (
@@ -32,6 +34,9 @@ export default function CRMManagement() {
             {tab.label}
           </button>
         ))}
+      </div>
+      <div className="flex justify-start gap-4 mb-6 flex-wrap">
+        <button> </button>
       </div>
 
       {/* ✅ Tab Content */}
