@@ -1,43 +1,62 @@
-import React, { useState } from 'react';
-import { Users, Factory, AlertTriangle, DollarSign, TrendingUp, FileText, Clock, UserCheck, MessageSquare, Truck } from 'lucide-react';
-import DataTable from '../../components/DataTable';
-import Modal from '../../components/Modal';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { workers, factories, alerts } from '../../lib/data';
+import React, { useState } from "react";
+import {
+  Users,
+  Factory,
+  AlertTriangle,
+  DollarSign,
+  TrendingUp,
+  FileText,
+  Clock,
+  UserCheck,
+  MessageSquare,
+  Truck,
+} from "lucide-react";
+import DataTable from "../../components/DataTable";
+import Modal from "../../components/Modal";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { workers, factories, alerts } from "../../lib/data";
 
 // Form schemas
 const remarkSchema = z.object({
-  recipient: z.string().min(1, 'Recipient is required'),
-  recipientType: z.enum(['worker', 'supervisor']),
-  subject: z.string().min(1, 'Subject is required'),
-  message: z.string().min(10, 'Message must be at least 10 characters'),
-  priority: z.enum(['low', 'medium', 'high']),
+  recipient: z.string().min(1, "Recipient is required"),
+  recipientType: z.enum(["worker", "supervisor"]),
+  subject: z.string().min(1, "Subject is required"),
+  message: z.string().min(10, "Message must be at least 10 characters"),
+  priority: z.enum(["low", "medium", "high"]),
 });
 
 const supplierSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  contactPerson: z.string().min(1, 'Contact person is required'),
-  email: z.string().email('Invalid email'),
-  phone: z.string().min(1, 'Phone is required'),
-  category: z.string().min(1, 'Category is required'),
+  name: z.string().min(1, "Name is required"),
+  contactPerson: z.string().min(1, "Contact person is required"),
+  email: z.string().email("Invalid email"),
+  phone: z.string().min(1, "Phone is required"),
+  category: z.string().min(1, "Category is required"),
   rating: z.number().min(1).max(5),
-  status: z.enum(['active', 'inactive']),
+  status: z.enum(["active", "inactive"]),
+});
+
+// New Issue Schema
+const issueSchema = z.object({
+  worker: z.string().min(1, "Worker is required"),
+  subject: z.string().min(1, "Subject is required"),
+  description: z.string().min(10, "Description must be at least 10 characters"),
 });
 
 type RemarkFormData = z.infer<typeof remarkSchema>;
 type SupplierFormData = z.infer<typeof supplierSchema>;
+type IssueFormData = z.infer<typeof issueSchema>;
 
 interface Remark {
   id: string;
   recipient: string;
-  recipientType: 'worker' | 'supervisor';
+  recipientType: "worker" | "supervisor";
   subject: string;
   message: string;
-  priority: 'low' | 'medium' | 'high';
+  priority: "low" | "medium" | "high";
   createdAt: string;
-  status: 'sent' | 'read' | 'acknowledged';
+  status: "sent" | "read" | "acknowledged";
 }
 
 interface Supplier {
@@ -48,9 +67,27 @@ interface Supplier {
   phone: string;
   category: string;
   rating: number;
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
   lastDelivery?: string;
   totalOrders: number;
+}
+
+// New Issue Interface
+interface Issue {
+  id: string;
+  worker: string;
+  subject: string;
+  description: string;
+  createdAt: string;
+  status: "open" | "in progress" | "resolved";
+}
+
+// New Invoice Interface
+interface Invoice {
+  id: string;
+  invoice: string;
+  month: string;
+  status: string;
 }
 
 export default function FactoryDashboard() {
@@ -59,122 +96,179 @@ export default function FactoryDashboard() {
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
   const [editingSupplier, setEditingSupplier] = useState<Supplier | null>(null);
 
-  // Mock data
+  // New modal state for Issue
+  const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
+
+  // Mock data for remarks and suppliers
   const [remarks, setRemarks] = useState<Remark[]>([
     {
-      id: '1',
-      recipient: 'John Smith',
-      recipientType: 'worker',
-      subject: 'Performance Recognition',
-      message: 'Great work on meeting production targets this week.',
-      priority: 'medium',
-      createdAt: '2024-03-20',
-      status: 'sent'
+      id: "1",
+      recipient: "John Smith",
+      recipientType: "worker",
+      subject: "Performance Recognition",
+      message: "Great work on meeting production targets this week.",
+      priority: "medium",
+      createdAt: "2024-03-20",
+      status: "sent",
     },
     {
-      id: '2',
-      recipient: 'Sarah Wilson',
-      recipientType: 'supervisor',
-      subject: 'Safety Protocol Update',
-      message: 'Please review and implement new safety guidelines.',
-      priority: 'high',
-      createdAt: '2024-03-19',
-      status: 'read'
-    }
+      id: "2",
+      recipient: "Sarah Wilson",
+      recipientType: "supervisor",
+      subject: "Safety Protocol Update",
+      message: "Please review and implement new safety guidelines.",
+      priority: "high",
+      createdAt: "2024-03-19",
+      status: "read",
+    },
   ]);
 
   const [suppliers, setSuppliers] = useState<Supplier[]>([
     {
-      id: '1',
-      name: 'Quality Materials Co.',
-      contactPerson: 'Jane Wilson',
-      email: 'jane@qualitymaterials.com',
-      phone: '555-0123',
-      category: 'Raw Materials',
+      id: "1",
+      name: "Quality Materials Co.",
+      contactPerson: "Jane Wilson",
+      email: "jane@qualitymaterials.com",
+      phone: "555-0123",
+      category: "Raw Materials",
       rating: 4.5,
-      status: 'active',
-      lastDelivery: '2024-03-18',
-      totalOrders: 156
+      status: "active",
+      lastDelivery: "2024-03-18",
+      totalOrders: 156,
     },
     {
-      id: '2',
-      name: 'Tech Equipment Ltd.',
-      contactPerson: 'Mike Johnson',
-      email: 'mike@techequipment.com',
-      phone: '555-0124',
-      category: 'Equipment',
+      id: "2",
+      name: "Tech Equipment Ltd.",
+      contactPerson: "Mike Johnson",
+      email: "mike@techequipment.com",
+      phone: "555-0124",
+      category: "Equipment",
       rating: 4.0,
-      status: 'active',
-      lastDelivery: '2024-03-15',
-      totalOrders: 89
-    }
+      status: "active",
+      lastDelivery: "2024-03-15",
+      totalOrders: 89,
+    },
   ]);
 
-  // Form handlers
-  const { register: remarkRegister, handleSubmit: handleRemarkSubmit, reset: resetRemark, formState: { errors: remarkErrors } } = useForm<RemarkFormData>({
-    resolver: zodResolver(remarkSchema)
-  });
+  // New state for issues
+  const [issues, setIssues] = useState<Issue[]>([]);
 
-  const { register: supplierRegister, handleSubmit: handleSupplierSubmit, reset: resetSupplier, formState: { errors: supplierErrors } } = useForm<SupplierFormData>({
-    resolver: zodResolver(supplierSchema)
-  });
+  // Sample workers with Marathi names
+  const sampleWorkers = [
+    { id: "w1", name: "राम", role: "उपकरण ऑपरेटर" },
+    { id: "w2", name: "श्याम", role: "उत्पादन कर्मचारी" },
+    { id: "w3", name: "गीता", role: "गुणवत्ता नियंत्रण" },
+    { id: "w4", name: "सीता", role: "सुरक्षा निरीक्षक" },
+  ];
 
-  // Table columns
-  const remarkColumns = [
-    { key: 'recipient', label: 'Recipient' },
-    { key: 'recipientType', label: 'Type' },
-    { key: 'subject', label: 'Subject' },
-    { 
-      key: 'priority', 
-      label: 'Priority',
-      render: (value: string) => (
-        <span className={`px-2 py-1 rounded-full text-xs ${
-          value === 'high' ? 'bg-red-100 text-red-800' :
-          value === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-          'bg-blue-100 text-blue-800'
-        }`}>
-          {value}
-        </span>
-      )
+  // Sample invoices data
+  const sampleInvoices: Invoice[] = [
+    { id: "inv1", invoice: "INV-1001", month: "January", status: "credited" },
+    {
+      id: "inv2",
+      invoice: "INV-1002",
+      month: "February",
+      status: "in progress",
     },
-    { 
-      key: 'status', 
-      label: 'Status',
+    { id: "inv3", invoice: "INV-1003", month: "March", status: "pending" },
+  ];
+
+  // Form handlers
+  const {
+    register: remarkRegister,
+    handleSubmit: handleRemarkSubmit,
+    reset: resetRemark,
+    formState: { errors: remarkErrors },
+  } = useForm<RemarkFormData>({
+    resolver: zodResolver(remarkSchema),
+  });
+
+  const {
+    register: supplierRegister,
+    handleSubmit: handleSupplierSubmit,
+    reset: resetSupplier,
+    formState: { errors: supplierErrors },
+  } = useForm<SupplierFormData>({
+    resolver: zodResolver(supplierSchema),
+  });
+
+  const {
+    register: issueRegister,
+    handleSubmit: handleIssueSubmit,
+    reset: resetIssue,
+    formState: { errors: issueErrors },
+  } = useForm<IssueFormData>({
+    resolver: zodResolver(issueSchema),
+  });
+
+  // Table columns for existing features
+  const remarkColumns = [
+    { key: "recipient", label: "Recipient" },
+    { key: "recipientType", label: "Type" },
+    { key: "subject", label: "Subject" },
+    {
+      key: "priority",
+      label: "Priority",
       render: (value: string) => (
-        <span className={`px-2 py-1 rounded-full text-xs ${
-          value === 'sent' ? 'bg-blue-100 text-blue-800' :
-          value === 'read' ? 'bg-yellow-100 text-yellow-800' :
-          'bg-green-100 text-green-800'
-        }`}>
+        <span
+          className={`px-2 py-1 rounded-full text-xs ${
+            value === "high"
+              ? "bg-red-100 text-red-800"
+              : value === "medium"
+              ? "bg-yellow-100 text-yellow-800"
+              : "bg-blue-100 text-blue-800"
+          }`}
+        >
           {value}
         </span>
-      )
-    }
+      ),
+    },
+    {
+      key: "status",
+      label: "Status",
+      render: (value: string) => (
+        <span
+          className={`px-2 py-1 rounded-full text-xs ${
+            value === "sent"
+              ? "bg-blue-100 text-blue-800"
+              : value === "read"
+              ? "bg-yellow-100 text-yellow-800"
+              : "bg-green-100 text-green-800"
+          }`}
+        >
+          {value}
+        </span>
+      ),
+    },
   ];
 
   const supplierColumns = [
-    { key: 'name', label: 'Name' },
-    { key: 'category', label: 'Category' },
-    { key: 'contactPerson', label: 'Contact Person' },
-    { 
-      key: 'rating', 
-      label: 'Rating',
-      render: (value: number) => '⭐'.repeat(Math.round(value))
-    },
-    { 
-      key: 'status', 
-      label: 'Status',
-      render: (value: string) => (
-        <span className={`px-2 py-1 rounded-full text-xs ${
-          value === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-        }`}>
-          {value}
-        </span>
-      )
+    { key: "name", label: "Name" },
+    { key: "category", label: "Category" },
+    { key: "contactPerson", label: "Contact Person" },
+    {
+      key: "rating",
+      label: "Rating",
+      render: (value: number) => "⭐".repeat(Math.round(value)),
     },
     {
-      key: 'actions',
-      label: 'Actions',
+      key: "status",
+      label: "Status",
+      render: (value: string) => (
+        <span
+          className={`px-2 py-1 rounded-full text-xs ${
+            value === "active"
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {value}
+        </span>
+      ),
+    },
+    {
+      key: "actions",
+      label: "Actions",
       render: (_: any, supplier: Supplier) => (
         <div className="flex space-x-2">
           <button
@@ -190,17 +284,79 @@ export default function FactoryDashboard() {
             Delete
           </button>
         </div>
-      )
-    }
+      ),
+    },
   ];
 
-  // Handlers
+  // New table columns for sample workers
+  const workerColumns = [
+    { key: "name", label: "Name" },
+    { key: "role", label: "Role" },
+  ];
+
+  // New table columns for worker issues
+  const issueColumns = [
+    { key: "worker", label: "Worker" },
+    { key: "subject", label: "Subject" },
+    { key: "description", label: "Description" },
+    {
+      key: "status",
+      label: "Status",
+      render: (value: string) => (
+        <span className="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-800">
+          {value}
+        </span>
+      ),
+    },
+    {
+      key: "createdAt",
+      label: "Created At",
+      render: (value: string) => new Date(value).toLocaleDateString(),
+    },
+  ];
+
+  // New table columns for invoices
+  const invoiceColumns = [
+    { key: "invoice", label: "Invoice" },
+    { key: "month", label: "Month" },
+    {
+      key: "status",
+      label: "Status",
+      render: (value: string) => (
+        <span
+          className={`px-2 py-1 rounded-full text-xs ${
+            value === "credited"
+              ? "bg-green-100 text-green-800"
+              : value === "in progress"
+              ? "bg-yellow-100 text-yellow-800"
+              : "bg-gray-100 text-gray-800"
+          }`}
+        >
+          {value}
+        </span>
+      ),
+    },
+    {
+      key: "download",
+      label: "Download PDF",
+      render: (_: any, invoice: Invoice) => (
+        <button
+          onClick={() => downloadInvoicePDF(invoice)}
+          className="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700"
+        >
+          Download
+        </button>
+      ),
+    },
+  ];
+
+  // Handlers for existing features
   const handleRemarkSubmission = async (data: RemarkFormData) => {
     const newRemark: Remark = {
       id: Date.now().toString(),
       ...data,
       createdAt: new Date().toISOString(),
-      status: 'sent'
+      status: "sent",
     };
 
     setRemarks([newRemark, ...remarks]);
@@ -210,16 +366,18 @@ export default function FactoryDashboard() {
 
   const handleSupplierSubmission = async (data: SupplierFormData) => {
     if (editingSupplier) {
-      setSuppliers(prev => prev.map(supplier => 
-        supplier.id === editingSupplier.id
-          ? { ...supplier, ...data }
-          : supplier
-      ));
+      setSuppliers((prev) =>
+        prev.map((supplier) =>
+          supplier.id === editingSupplier.id
+            ? { ...supplier, ...data }
+            : supplier
+        )
+      );
     } else {
       const newSupplier: Supplier = {
         id: Date.now().toString(),
         ...data,
-        totalOrders: 0
+        totalOrders: 0,
       };
       setSuppliers([newSupplier, ...suppliers]);
     }
@@ -235,9 +393,29 @@ export default function FactoryDashboard() {
   };
 
   const handleDeleteSupplier = (id: string) => {
-    if (window.confirm('Are you sure you want to delete this supplier?')) {
-      setSuppliers(prev => prev.filter(supplier => supplier.id !== id));
+    if (window.confirm("Are you sure you want to delete this supplier?")) {
+      setSuppliers((prev) => prev.filter((supplier) => supplier.id !== id));
     }
+  };
+
+  // Handler for new Issue submission
+  const handleIssueSubmission = async (data: IssueFormData) => {
+    const newIssue: Issue = {
+      id: Date.now().toString(),
+      ...data,
+      createdAt: new Date().toISOString(),
+      status: "open",
+    };
+
+    setIssues([newIssue, ...issues]);
+    setIsIssueModalOpen(false);
+    resetIssue();
+  };
+
+  // Function to simulate invoice PDF download
+  const downloadInvoicePDF = (invoice: Invoice) => {
+    // Replace this with real download logic if available
+    alert(`Downloading PDF for ${invoice.invoice}`);
   };
 
   return (
@@ -258,9 +436,11 @@ export default function FactoryDashboard() {
 
         <div className="bg-white p-6 rounded-lg shadow-sm">
           <Truck className="w-8 h-8 mb-2 text-purple-600" />
-          <h3 className="text-gray-500 text-sm font-medium">Active Suppliers</h3>
+          <h3 className="text-gray-500 text-sm font-medium">
+            Active Suppliers
+          </h3>
           <p className="text-2xl font-semibold mt-1">
-            {suppliers.filter(s => s.status === 'active').length}
+            {suppliers.filter((s) => s.status === "active").length}
           </p>
           <p className="text-sm text-green-600 mt-2">All performing well</p>
         </div>
@@ -269,7 +449,7 @@ export default function FactoryDashboard() {
           <AlertTriangle className="w-8 h-8 mb-2 text-yellow-600" />
           <h3 className="text-gray-500 text-sm font-medium">Active Alerts</h3>
           <p className="text-2xl font-semibold mt-1">
-            {alerts.filter(a => a.status === 'new').length}
+            {alerts.filter((a) => a.status === "new").length}
           </p>
           <p className="text-sm text-red-600 mt-2">↑ 5 new alerts</p>
         </div>
@@ -297,7 +477,7 @@ export default function FactoryDashboard() {
       </div>
 
       {/* Suppliers Section */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold">Suppliers</h2>
           <button
@@ -313,6 +493,124 @@ export default function FactoryDashboard() {
         <DataTable columns={supplierColumns} data={suppliers} />
       </div>
 
+      {/* New Workers List Section */}
+      <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Workers List</h2>
+        </div>
+        <DataTable columns={workerColumns} data={sampleWorkers} />
+      </div>
+
+      {/* New Worker Issues Section */}
+      <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Worker Issues</h2>
+          <button
+            onClick={() => setIsIssueModalOpen(true)}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          >
+            Raise Issue
+          </button>
+        </div>
+        <DataTable columns={issueColumns} data={issues} />
+      </div>
+
+      {/* New Invoices Section */}
+      <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Invoices</h2>
+        </div>
+        <DataTable columns={invoiceColumns} data={sampleInvoices} />
+      </div>
+
+      {/* New Raise Issue Modal */}
+      <Modal
+        isOpen={isIssueModalOpen}
+        onClose={() => {
+          setIsIssueModalOpen(false);
+          resetIssue();
+        }}
+        title="Raise Issue"
+      >
+        <form
+          onSubmit={handleIssueSubmit(handleIssueSubmission)}
+          className="space-y-4"
+        >
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Worker
+            </label>
+            <select
+              {...issueRegister("worker")}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            >
+              <option value="">Select worker</option>
+              {sampleWorkers.map((worker) => (
+                <option key={worker.id} value={worker.name}>
+                  {worker.name}
+                </option>
+              ))}
+            </select>
+            {issueErrors.worker && (
+              <p className="mt-1 text-sm text-red-600">
+                {issueErrors.worker.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Subject
+            </label>
+            <input
+              type="text"
+              {...issueRegister("subject")}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            />
+            {issueErrors.subject && (
+              <p className="mt-1 text-sm text-red-600">
+                {issueErrors.subject.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Description
+            </label>
+            <textarea
+              {...issueRegister("description")}
+              rows={4}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            />
+            {issueErrors.description && (
+              <p className="mt-1 text-sm text-red-600">
+                {issueErrors.description.message}
+              </p>
+            )}
+          </div>
+
+          <div className="flex space-x-4">
+            <button
+              type="submit"
+              className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+            >
+              Submit Issue
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setIsIssueModalOpen(false);
+                resetIssue();
+              }}
+              className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </Modal>
+
       {/* Add/Edit Remark Modal */}
       <Modal
         isOpen={isRemarkModalOpen}
@@ -322,11 +620,16 @@ export default function FactoryDashboard() {
         }}
         title="Add Remark"
       >
-        <form onSubmit={handleRemarkSubmit(handleRemarkSubmission)} className="space-y-4">
+        <form
+          onSubmit={handleRemarkSubmit(handleRemarkSubmission)}
+          className="space-y-4"
+        >
           <div>
-            <label className="block text-sm font-medium text-gray-700">Recipient Type</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Recipient Type
+            </label>
             <select
-              {...remarkRegister('recipientType')}
+              {...remarkRegister("recipientType")}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
               <option value="">Select type</option>
@@ -334,54 +637,72 @@ export default function FactoryDashboard() {
               <option value="supervisor">Supervisor</option>
             </select>
             {remarkErrors.recipientType && (
-              <p className="mt-1 text-sm text-red-600">{remarkErrors.recipientType.message}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {remarkErrors.recipientType.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Recipient</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Recipient
+            </label>
             <select
-              {...remarkRegister('recipient')}
+              {...remarkRegister("recipient")}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
               <option value="">Select recipient</option>
-              {workers.map(worker => (
-                <option key={worker.id} value={worker.name}>{worker.name}</option>
+              {workers.map((worker) => (
+                <option key={worker.id} value={worker.name}>
+                  {worker.name}
+                </option>
               ))}
             </select>
             {remarkErrors.recipient && (
-              <p className="mt-1 text-sm text-red-600">{remarkErrors.recipient.message}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {remarkErrors.recipient.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Subject</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Subject
+            </label>
             <input
               type="text"
-              {...remarkRegister('subject')}
+              {...remarkRegister("subject")}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             />
             {remarkErrors.subject && (
-              <p className="mt-1 text-sm text-red-600">{remarkErrors.subject.message}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {remarkErrors.subject.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Message</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Message
+            </label>
             <textarea
-              {...remarkRegister('message')}
+              {...remarkRegister("message")}
               rows={4}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             />
             {remarkErrors.message && (
-              <p className="mt-1 text-sm text-red-600">{remarkErrors.message.message}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {remarkErrors.message.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Priority</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Priority
+            </label>
             <select
-              {...remarkRegister('priority')}
+              {...remarkRegister("priority")}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
               <option value="">Select priority</option>
@@ -390,7 +711,9 @@ export default function FactoryDashboard() {
               <option value="high">High</option>
             </select>
             {remarkErrors.priority && (
-              <p className="mt-1 text-sm text-red-600">{remarkErrors.priority.message}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {remarkErrors.priority.message}
+              </p>
             )}
           </div>
 
@@ -423,61 +746,82 @@ export default function FactoryDashboard() {
           setEditingSupplier(null);
           resetSupplier();
         }}
-        title={editingSupplier ? 'Edit Supplier' : 'Add Supplier'}
+        title={editingSupplier ? "Edit Supplier" : "Add Supplier"}
       >
-        <form onSubmit={handleSupplierSubmit(handleSupplierSubmission)} className="space-y-4">
+        <form
+          onSubmit={handleSupplierSubmit(handleSupplierSubmission)}
+          className="space-y-4"
+        >
           <div>
-            <label className="block text-sm font-medium text-gray-700">Name</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Name
+            </label>
             <input
               type="text"
-              {...supplierRegister('name')}
+              {...supplierRegister("name")}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             />
             {supplierErrors.name && (
-              <p className="mt-1 text-sm text-red-600">{supplierErrors.name.message}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {supplierErrors.name.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Contact Person</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Contact Person
+            </label>
             <input
               type="text"
-              {...supplierRegister('contactPerson')}
+              {...supplierRegister("contactPerson")}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             />
             {supplierErrors.contactPerson && (
-              <p className="mt-1 text-sm text-red-600">{supplierErrors.contactPerson.message}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {supplierErrors.contactPerson.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
             <input
               type="email"
-              {...supplierRegister('email')}
+              {...supplierRegister("email")}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             />
             {supplierErrors.email && (
-              <p className="mt-1 text-sm text-red-600">{supplierErrors.email.message}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {supplierErrors.email.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Phone</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Phone
+            </label>
             <input
               type="tel"
-              {...supplierRegister('phone')}
+              {...supplierRegister("phone")}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             />
             {supplierErrors.phone && (
-              <p className="mt-1 text-sm text-red-600">{supplierErrors.phone.message}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {supplierErrors.phone.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Category</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Category
+            </label>
             <select
-              {...supplierRegister('category')}
+              {...supplierRegister("category")}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
               <option value="">Select category</option>
@@ -488,36 +832,46 @@ export default function FactoryDashboard() {
               <option value="Safety Equipment">Safety Equipment</option>
             </select>
             {supplierErrors.category && (
-              <p className="mt-1 text-sm text-red-600">{supplierErrors.category.message}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {supplierErrors.category.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Rating</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Rating
+            </label>
             <input
               type="number"
               min="1"
               max="5"
               step="0.5"
-              {...supplierRegister('rating', { valueAsNumber: true })}
+              {...supplierRegister("rating", { valueAsNumber: true })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             />
             {supplierErrors.rating && (
-              <p className="mt-1 text-sm text-red-600">{supplierErrors.rating.message}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {supplierErrors.rating.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Status</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Status
+            </label>
             <select
-              {...supplierRegister('status')}
+              {...supplierRegister("status")}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
             </select>
             {supplierErrors.status && (
-              <p className="mt-1 text-sm text-red-600">{supplierErrors.status.message}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {supplierErrors.status.message}
+              </p>
             )}
           </div>
 
@@ -526,7 +880,7 @@ export default function FactoryDashboard() {
               type="submit"
               className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
             >
-              {editingSupplier ? 'Update' : 'Add'} Supplier
+              {editingSupplier ? "Update" : "Add"} Supplier
             </button>
             <button
               type="button"

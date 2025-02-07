@@ -128,7 +128,7 @@ function Sidebar({
 
   const menuItems = [
     { icon: BarChart3, label: "Dashboard", path: "/" },
-    { icon: Users, label: "Workers Management", path: "/labor" },
+    { icon: Users, label: "Worker Management", path: "/labor" },
     { icon: Factory, label: "HRM", path: "/factories" },
     { icon: FileText, label: "CRM", path: "/crm" },
     { icon: Landmark, label: "Finance", path: "/finance" },
